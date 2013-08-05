@@ -101,8 +101,8 @@ echo "-----------------------------"
 echo "Setting proper permissions for public_html.."
 echo "-----------------------------"
 
-chmod 711 /home/$vhostuser
-chmod 755 /home/$vhostuser/public_html
+chmod 711 /home/$vhostgroup
+chmod 755 /home/$vhostgroup/public_html
 
 echo "                             "
 echo "\o/ Done! \o/" 
@@ -114,7 +114,7 @@ echo "<-------- Summary ---------->"
 echo "username:  $vhostuser        "
 echo "usergroup: $vhostgroup       "
 echo "userid:    $userid           "
-echo "www root:  /home/$vhostuser/public_html"
+echo "www root:  /home/$vhostgroup/public_html"
 echo "<--------------------------->"
 echo "                             "
 echo "(Note: now run vhost_maker.sh to create vhost template)"
