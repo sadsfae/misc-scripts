@@ -1,5 +1,6 @@
 #!/bin/sh
 # create a local user/group for hosting a virtual host out of public_html
+# checks create local user and group, makes the users home named after groupname
 # use this in combination with vhost_maker.sh and run prior, remembering your values
 # this needs to be run as root
 
@@ -86,15 +87,15 @@ echo "Creating users public_html..."
 echo "-----------------------------"
 echo "                             "
 
-mkdir -p /home/$vhostuser/public_html
-mkdir -p /home/$vhostuser/logs
+mkdir -p /home/$vhostgroup/public_html
+mkdir -p /home/$vhostgroup/logs
 
 echo "-----------------------------"
 echo "Setting ownership permissions.."
 echo "-----------------------------"
 echo "                             "
 
-chown -R $vhostuser.$vhostgroup /home/$vhostuser
+chown -R $vhostuser.$vhostgroup /home/$vhostgroup
 
 echo "-----------------------------"
 echo "Setting proper permissions for public_html.."
