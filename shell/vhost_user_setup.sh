@@ -35,6 +35,7 @@ fi
 echo "                   "
 echo "-------------------"
 echo "vhost users group (websitename minus www i.e. bubba.com)"
+echo ".. this will also serve as your users homedir name      "
 echo "-------------------"
 
 vhostgroup=$(head -n1)
