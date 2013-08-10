@@ -5,7 +5,7 @@
 # This may turn into a better flask app later (with all currencies via API)
 # For now let's just smash it with a hammer
 # 1 czk = .051 USD
-# 1 USD = 19.57 czk
+# 1 USD = 19.30 czk
 
 import os
 import sys
@@ -31,7 +31,7 @@ def cztousd():
 
 def usdtoczk():
     "convert usd to czk"
-    return amount / 19.57
+    return amount * 19.57
 
 # use the current exchange rate
 convertedusd = cztousd()
