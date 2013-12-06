@@ -2,7 +2,7 @@
 # GPG encrypt logfiles to send them to an FTP server
 # this assumes a dedicated gpg key with no passphrase
 # only use it for this purpose, it's just to encrypt across the wire.
-# could be run once a day in cron via: 11/* * * * * /opt/gpg-enc-files.sh >/dev/null 2>&1
+# could be run once a day in cron via: * 11 * * * /opt/gpg-enc-files.sh >/dev/null 2>&1
 
 # array of key id's to include
 KEYIDS=(XXXXXXXX XXXXXXXX XXXXXXXX)
