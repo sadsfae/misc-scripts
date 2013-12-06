@@ -40,7 +40,7 @@ echo "gpg-enc-ftp-files.sh: completed encryption/backup of $yourlogs_$date.tar.g
 ftp -n $FTPHOST <<END_OF_SESSION
 user $FTPUSER $FTPPASS
 type binary
-put $backupdir/$yourlogs_$date.tar.gz.gpg
+put $backupdir/$yourlogs_$date.tar.gz.gpg $backupdir/$yourlogs_$date.tar.gz.gpg
 bye
 END_OF_SESSION
 
