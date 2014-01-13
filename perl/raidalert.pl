@@ -6,6 +6,8 @@
 # https://en.wikipedia.org/wiki/List_of_SMS_gateways
 # with a sane sendmail .forwards file it can be easily parsed and email to SMS message can be dispatched
 # the usage below might be for an online gaming guild who competes for in-game mobs with others
+# twitter functionality via the 1.1 API to post results via a twitter account
+# but still use the same system is inclusive also.
 
 use CGI;
 
@@ -35,8 +37,26 @@ print MAIL "$comments\n";
 print MAIL "\n.\n";
 close ( MAIL );
 
+########### POST TO TWITTER URL ###########
+# fill in your twitter account details if you'd like
+# to have twitter use/call the same backend system
+use Net::Twitter::Lite::WithAPIv1_1;
+
+my $nt = Net::Twitter::Lite::WithAPIv1_1->new(
+  consumer_key        => 'XXXXXXXXXXXXXXXX',
+  consumer_secret     => 'XXXXXXXXXXXXXXXX',
+  access_token        => 'XXXXXXXXXXXXXXXX',
+  access_token_secret => 'XXXXXXXXXXXXXXXX'
+);
+
+my $result = eval { $nt->update($comments) };
+
+warn "$@\n" if $@;
+
+########### AUTO GENERATE HTML PAGE WHEN DONE ##########
 # compose an HTML page after CGI submission
-# example below might be for an onling gaming guildI
+# example below might be for an onling gaming guild
+
 print <<END_HTML;
 <html>
 <head></head>
