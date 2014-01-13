@@ -6,8 +6,9 @@
 # https://en.wikipedia.org/wiki/List_of_SMS_gateways
 # with a sane sendmail .forwards file it can be easily parsed and email to SMS message can be dispatched
 # the usage below might be for an online gaming guild who competes for in-game mobs with others
-# twitter functionality via the 1.1 API to post results via a twitter account
-# but still use the same system is inclusive also.
+# twitter functionality via the 1.1 API is also added below to post the CGI text
+# to a twitter account, if users are subscribed to it via SMS they will receive it
+# the same way that the normal email-to-sms message is sent.
 
 use CGI;
 
@@ -40,6 +41,8 @@ close ( MAIL );
 ########### POST TO TWITTER URL ###########
 # fill in your twitter account details if you'd like
 # to have twitter use/call the same backend system
+# this will also post your raid alert on twitter and people
+# subscribed to it will receive it (via SMS or other)
 use Net::Twitter::Lite::WithAPIv1_1;
 
 my $nt = Net::Twitter::Lite::WithAPIv1_1->new(
