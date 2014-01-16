@@ -6,6 +6,7 @@
 nsupdate=`which nsupdate`
 
 ########## FUNCTIONS ##########
+
 dns_add_forward()
 {  # use nsupdate to make forward dns entry
    $nsupdate <<END_OF_SESSION
@@ -154,7 +155,7 @@ esac
 # if input isn't yes quit after taunting user.
 case $confirm in
 'n')
-   echo "fe.g, why don't you go cry about it some more on your blog!"
+   echo "ok, why don't you go cry about it some more on your blog!"
    exit 1
 ;;
 esac
