@@ -1,6 +1,6 @@
 #!/bin/sh
 # script to call nsupdate to add or delete DNS entries
-# intended to be run locally where named/BIND is running
+# intends to be run on localhost where named is running
 # does not need a named reload
 
 nsupdate=`which nsupdate`
@@ -11,7 +11,7 @@ dns_add_forward()
    $nsupdate <<END_OF_SESSION
    server localhost
    zone $forwardzone
-   update add $fqdnadd.$forwardzone 300 A $ipaddr
+   update add $fqdnadd 300 A $ipaddr
    show
    send
    quit
@@ -23,7 +23,7 @@ dns_add_reverse()
    $nsupdate <<END_OF_SESSION
    server localhost
    zone $reversezone
-   update add $ipaddrreverse$arpa 300 PTR $fqdnadd.
+   update add $ipaddrreverse$arpa 300 PTR $fqdnadd
    show
    send
    quit
@@ -35,8 +35,8 @@ dns_delete_forward()
 {  # use nsupdate to delete existing entry
    $nsupdate <<END_OF_SESSION
    server localhost
-   zone $zone
-   update delete $fqdndelete.$forwardzone 300 A $ipaddr
+   zone $forwardzone
+   update delete $fqdndelete A
    show
    send
    quit
@@ -49,7 +49,7 @@ dns_delete_reverse()
    $nsupdate <<END_OF_SESSION
    server localhost
    zone $reversezone
-   update delete $ipaddrreverse$arpa 300 PTR $fqdndelete.
+   update delete $ipaddrreverse$arpa PTR
    show
    send
    quit
@@ -92,7 +92,7 @@ if [ $action = "1" ];
    then
 cat <<Endofmessage
 ----------------------------------------
-Enter short hostname to add.. e.g. host01
+Enter short hostname to ADD.. e.g. host01
 ----------------------------------------
 Endofmessage
 
@@ -108,26 +108,27 @@ ipaddr=$(head -n1)
 
 cat <<Endofmessage
 ----------------------------------------
-Enter zone name.. e.g. prod.example.com
+Enter zone name.. e.g. example.com 
 ----------------------------------------
 Endofmessage
 
-forwardzone=$(head -n1)
+forwardzone=$(head -n1).
 ipaddrreverse=$(reverse_ip $ipaddr)
 arpa='in-addr.arpa.'
-reversezone=$(reverse_ip $ipaddr | cut -d "." -f2-4)
+reversezone=$(reverse_ip $ipaddr | cut -d "." -f2-4).$arpa
+fqdnadd=$fqdnadd.$forwardzone
 
 cat <<Endofmessage
 
 + + + + + + + + + + + + + + + + + + + + +
-You're about to add the following entry..
+You're about to ADD the following entry..
 + + + + + + + + + + + + + + + + + + + + +
 
 (forward zone: $forwardzone)
-$fqdnadd.$forwardzone 300 A $ipaddr
+$fqdnadd 300 A $ipaddr
 - - - - - - - - - - - - - - - - - - - - - 
-(reverse zone: $reversezone.$arpa)
-$ipaddrreverse$arpa 300 PTR $fqdnadd.$forwardzone
+(reverse zone: $reversezone)
+$ipaddrreverse$arpa 300 PTR $fqdnadd
 
 + + + + + + + + + + + + + + + + + + + + +
 Are you sure?  (Y/N)
@@ -153,14 +154,14 @@ esac
 # if input isn't yes quit after taunting user.
 case $confirm in
 'n')
-   echo "fine, why don't you go cry about it some more on your blog!"
+   echo "fe.g, why don't you go cry about it some more on your blog!"
    exit 1
 ;;
 esac
 
 case $confirm in
 'N')
-   echo "How does it feel to live a life of dissapointment?"
+   echo "How does it feel to le.g a life of dissapointment?"
    exit 1
 ;;
 esac
@@ -188,14 +189,15 @@ ipaddr=$(head -n1)
 
 cat <<Endofmessage
 ----------------------------------------
-Enter zone name to DELETE entry from.. e.g. prod.example.com
+Enter zone name to DELETE entry from.. e.g. example.com 
 ----------------------------------------
 Endofmessage
 
-forwardzone=$(head -n1)
+forwardzone=$(head -n1).
 ipaddrreverse=$(reverse_ip $ipaddr)
 arpa='in-addr.arpa.'
-reversezone=$(reverse_ip $ipaddr | cut -d "." -f2-4)
+reversezone=$(reverse_ip $ipaddr | cut -d "." -f2-4).$arpa
+fqdndelete=$fqdndelete.$forwardzone
 
 cat <<Endofmessage
 
@@ -204,10 +206,10 @@ You're about to DELETE the following entry..
 + + + + + + + + + + + + + + + + + + + + +
 
 (forward zone: $forwardzone)
-$fqdndelete.$forwardzone 300 A $ipaddr
+$fqdndelete 300 A $ipaddr
 - - - - - - - - - - - - - - - - - - - - -
-(reverse zone: $reversezone.$arpa)
-$ipaddrreverse$arpa 300 PTR $fqdndelete.$forwardzone
+(reverse zone: $reversezone$arpa)
+$ipaddrreverse$arpa 300 PTR $fqdndelete
 
 + + + + + + + + + + + + + + + + + + + + +
 Are you sure?  (Y/N)
