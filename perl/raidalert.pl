@@ -49,7 +49,8 @@ my $nt = Net::Twitter::Lite::WithAPIv1_1->new(
   consumer_key        => 'XXXXXXXXXXXXXXXX',
   consumer_secret     => 'XXXXXXXXXXXXXXXX',
   access_token        => 'XXXXXXXXXXXXXXXX',
-  access_token_secret => 'XXXXXXXXXXXXXXXX'
+  access_token_secret => 'XXXXXXXXXXXXXXXX',
+  ssl                 => '1'
 );
 
 my $result = eval { $nt->update($comments) };
