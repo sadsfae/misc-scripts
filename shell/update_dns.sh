@@ -162,7 +162,7 @@ esac
 
 case $confirm in
 'N')
-   echo "How does it feel to le.g a life of dissapointment?"
+   echo "How does it feel to live a life of disappointment?"
    exit 1
 ;;
 esac
