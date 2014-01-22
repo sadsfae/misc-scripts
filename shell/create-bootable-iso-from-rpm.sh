@@ -5,7 +5,7 @@
 # in this particular example we're syncing the latest RHEV-H RPM from a builder, exploding
 # it and calling livecd-iso-to-pxeboot to create bootable media then copying the PXE substructure
 # into Foreman for provisioning.  Afterwards it will remount the new ISO and update fstab for you.
-# https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Virtualization_for_Servers/2.1/html/5.4-2.1_Hypervisor_Deployment_Guide/sect-Deployment_Guide-                         Preparing_Red_Hat_Enterprise_Virtualization_Hypervisor_installation_media-Deploying_RHEV_Hypervisors_with_PXE_and_tftp.html
+# https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Virtualization_for_Servers/2.1/html/5.4-2.1_Hypervisor_Deployment_Guide/sect-Deployment_Guide-Preparing_Red_Hat_Enterprise_Virtualization_Hypervisor_installation_media-Deploying_RHEV_Hypervisors_with_PXE_and_tftp.html
 # requires livecd-tools package
 # run from cron via: * 14 * * * /root/create-bootable-iso-from-rpm.sh > /var/log/iso-create-from-rpm.log 2>&1
 
@@ -44,6 +44,7 @@ precheck_against_current()
      return 1
    fi
 }
+
 update_fstab()
 {  # obtain name of new ISO image to update fstab
    echo "updating fstab with new ISO..."
