@@ -22,6 +22,8 @@
 ####  "== Rack $racknumber ==
 ####  ||= Location =||= Type =||= Brand =||= Model =||= Serial # =||= Hostname =||= IP =||= MAC =||= IPMI Hostname =||= IPMI IP =||= IPMI MAC =||= Mgmt =||
 
+[ $# -eq 0 ] && { echo "Usage: $0 <host #> <rack #>"; exit 1; }
+	
 nodeorder=${1}p
 racknumber=$2
 wikidir="/tmp/rack$racknumber"
