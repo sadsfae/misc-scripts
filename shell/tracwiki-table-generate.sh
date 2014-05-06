@@ -37,7 +37,7 @@ createwikidata() {
         touch rack$racknumber/{ethmac.txt,hostname.txt,hostnumber.txt,ipmimac.txt,ipminame.txt,serial.txt} 
 }
 
-if [[ ! -d /tmp/rack$2 ]] ; then
+if [ ! -d /tmp/rack$2 ] ; then
 	createwikidata
    exit
 fi
