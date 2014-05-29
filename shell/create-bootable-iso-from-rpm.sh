@@ -84,7 +84,7 @@ case $(newbuild) in
    ;;
 '1')
    if $(precheck_against_current) ; then
-     echo Nothing to do.  We have the latest download. allahu akbar.
+     echo Nothing to do.  We have the latest download.
      exit 0
    fi
    echo "fetching a new build based on $(builddate) RPM source"
