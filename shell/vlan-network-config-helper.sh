@@ -291,9 +291,6 @@ case $vlaniphostdns in
 esac
 fi
 
-# set output of ip_free() as a variable
-ip_used=free_ip
-
 # if IP is in use, warn and quit after taunting user
 case $(ip_free) in
 '0')
