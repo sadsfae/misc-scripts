@@ -1,21 +1,20 @@
 #!/bin/sh
 # this tool gives you an easy way to generage ifcfg-* on Linux machines
-# when using bonding config, our default is mode 4 for LACP
+# when using bonding configs, our default is mode 4 for LACP
 # this will create necessary bonding configs on a host if they are
-# tagged on more than one VLAN
+# tagged on more than one VLAN.
 # this could be done in kickstart %post but I like the option of doing it selectively.
 # *** NOTE *** You MUST have the following pre-requisites
 # 1) proper VLAN switch configuration in place for the node
 # 2) DNS entries that exist on the correct network/map
 
-ifconfig=`which ifconfig`
 bondinterface=bond0
 
 #### FUNCTIONS START ####
 
 vlan_determine()
 {  # determine what VLAN isn't needed, return first three octets
-   ifconfig $bondinterface | grep Bcast | awk -F ":" '{print $2}' | awk '{print $1}' | awk -F "." '{print $1,$2,$3}' | sed 's/ /./g'
+   /sbin/ifconfig $bondinterface | grep Bcast | awk -F ":" '{print $2}' | awk '{print $1}' | awk -F "." '{print $1,$2,$3}' | sed 's/ /./g'
 }
 
 # set ip variable
@@ -224,10 +223,8 @@ vlanadd=$(head -n1)
 # this is 2/2 of the interactive menus
 cat <<EndofMessage
 =========== VLAN Helper 5000 ==============
-Specify the full IP address for VLAN $vlanadd
-e.g. 10.1.16.99
-
-** Note ** This must exist in DNS first
+Specify the full IP address for this node 
+on VLAN $vlanadd
 ===========================================
 
 EndofMessage
@@ -255,17 +252,51 @@ if [ $vlanadd = "16" ]; then
    bridgename=cloudprv
 fi
 
+# refer to it's FQDN for the virtual interface
+vlaniphost=`host $vlanip | awk '{print $NF}'`
+
+# make DNS existence a 0 or 1 variable
+vlaniphostdns=`host $vlanip | grep pointer | wc -l`
+
+# cut ip address chosen down to first two octets
+ipaddr_short_largenet=`echo $vlanip | awk -F "." '{print $1,$2}' | sed 's/ /./g'`
+
+# ensure IP address has a valid DNS entry
+# since 172.16.0.0/18 is not DNS managed we skip the check
+if [ $ipaddr_short_largenet != '172.16' ]; then 
+case $vlaniphostdns in
+'1')
+   echo "---------------------------------"
+   echo "checking for valid reverse DNS..."
+   echo "done, proceeding."
+   echo "---------------------------------"
+;;
+'0')
+   echo "---------------------------------"
+   echo "----------!! ERROR !!------------"
+   echo "no valid DNS entry found for this address"
+   echo "why don't you cry about it on twitter?"
+   exit 1
+;;
+esac
+fi
+
 # generate the correct VLAN config
 cat <<EndofMessage
 
 ===================================================
 ---------------------------------------------------
 VLAN configs for $vlanip on VLAN: $vlanadd created
+for $vlaniphost
 
 1) /tmp/ifcfg-bond0.$vlanadd
 2) /tmp/ifcfg-$bridgename
 
-** copy these into /etc/sysconfig/network-scripts/
+** copy these into place after review **
+
+cp /tmp/ifcfg-bond0.$vlanadd /etc/sysconfig/network-scripts/
+cp /tmp/ifcfg-$bridgename /etc/sysconfig/network-scripts/
+
 ** issue 'service network restart' to take effect
 ---------------------------------------------------
 ===================================================
