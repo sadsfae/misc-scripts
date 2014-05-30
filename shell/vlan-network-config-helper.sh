@@ -7,6 +7,7 @@
 # *** NOTE *** You MUST have the following pre-requisites
 # 1) proper VLAN switch configuration in place for the node
 # 2) DNS entries that exist on the correct network/map
+# ** the 172.16.0.0/18 network does not check for valid DNS
 
 bondinterface=bond0
 
@@ -15,6 +16,11 @@ bondinterface=bond0
 vlan_determine()
 {  # determine what VLAN isn't needed, return first three octets
    /sbin/ifconfig $bondinterface | grep Bcast | awk -F ":" '{print $2}' | awk '{print $1}' | awk -F "." '{print $1,$2,$3}' | sed 's/ /./g'
+}
+
+ip_free()
+{  # determine if ip address chosen is being used or not
+   ping -c1 $vlanip | grep 'received' | awk -F',' '{print $2}' | awk '{print $1}'
 }
 
 # set ip variable
@@ -231,6 +237,9 @@ EndofMessage
 
 vlanip=$(head -n1)
 
+echo "---------------------------------"
+echo "checking if address is in use..."
+
 # obtain bridge name from VLAN choice
 if [ $vlanadd = "4" ]; then
    bridgename=hadoop
@@ -264,6 +273,7 @@ ipaddr_short_largenet=`echo $vlanip | awk -F "." '{print $1,$2}' | sed 's/ /./g'
 # ensure IP address has a valid DNS entry
 # since 172.16.0.0/18 is not DNS managed we skip the check
 if [ $ipaddr_short_largenet != '172.16' ]; then 
+
 case $vlaniphostdns in
 '1')
    echo "---------------------------------"
@@ -280,6 +290,25 @@ case $vlaniphostdns in
 ;;
 esac
 fi
+
+# set output of ip_free() as a variable
+ip_used=free_ip
+
+# if IP is in use, warn and quit after taunting user
+case $(ip_free) in
+'0')
+   echo "IP address $vlanip seems free.   "
+   echo "---------------------------------"
+;;
+'1')
+   echo "---------------------------------"
+   echo "----------!! ERROR !!------------"
+   echo "IP address $vlanip is in use by something"
+   echo "have you instead considered a career in crocodile wrestling?"
+   echo "                                 "
+   exit 1
+;;
+esac
 
 # generate the correct VLAN config
 cat <<EndofMessage
