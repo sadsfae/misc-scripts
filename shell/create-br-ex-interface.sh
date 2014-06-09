@@ -1,6 +1,28 @@
 #!/bin/sh
 # check/create bridged interface for use with openvswitch if it doesn't exist
 # assumes your primary interface is called "bond0"
+# assumes you're running a Red Hat based distribution
+
+check_os_version()
+{  # check /etc/redhat-release
+   cat /etc/redhat-release | awk '{print $1}'
+}
+
+os_version=$(check_os_version)
+
+start_ovs()
+{
+case $os_version in
+'Fedora')
+	systemctl enable openvswitch.service
+	systemctl start openvswitch.service
+;;
+'Red')
+	chkconfig --add openvswitch
+        service openvswitch start
+;;
+esac
+}
 
 check_br_ex_exist()
 {  # check if there's a bridged interface
@@ -10,7 +32,7 @@ check_br_ex_exist()
 create_br_ex_int()
 {  # bring up br-ex
    echo "starting openvswitch service.." 
-   chkconfig --add openvswitch ; service openvswitch start
+   start_ovs
    echo "creating external bridge interface.."
    cp /etc/sysconfig/network-scripts/ifcfg-bond0 /etc/sysconfig/network-scripts/ifcfg-br-ex 
    sed -i 's/IPADDR/#IPADDR/g' /etc/sysconfig/network-scripts/ifcfg-bond0
