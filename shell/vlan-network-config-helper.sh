@@ -8,6 +8,7 @@
 # 1) proper VLAN switch configuration in place for the node
 # 2) DNS entries that exist on the correct network/map
 # ** the 172.16.0.0/18 network does not check for valid DNS
+# ** the 10.1.253 network is also not DNS managed
 
 bondinterface=bond0
 
@@ -28,6 +29,25 @@ ipaddr_short=$(vlan_determine)
 
 # generate correct menu based on current ip address
 
+vlan_minus_dev()
+{  # generate vlan options minus dev vlan
+cat <<endofmessage
+
+=========== VLAN Helper 5000 ==============
+specify the vlan number for config creation
+--------------------------------------
+(4) vlan 4  (hadoop)    - 10.1.4.0/22
+(6) vlan 6  (cloudpub)  - 10.1.16.0/20
+(5) vlan 5  (mgmt)      - 10.1.8.0/23
+(9) vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv) - 172.16.0.0/18
+--------------------------------------
+===========================================
+endofmessage
+
+vlanadd=$(head -n1)
+}
+
 vlan_minus_hadoop()
 {  # generate vlan options minus hadoop
 cat <<endofmessage
@@ -36,9 +56,10 @@ cat <<endofmessage
 specify the vlan number for config creation
 --------------------------------------
 (6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(8) vlan 8  (mgmt)      - 10.1.8.0/23
+(5) vlan 5  (mgmt)      - 10.1.8.0/23
 (9) vlan 9  (rhev)      - 10.1.32.0/19
 (16) vlan 16 (cloudprv) - 172.16.0.0/18
+(17) vlan 17 (dev)      - 10.1.253.0/24
 --------------------------------------
 ===========================================
 endofmessage
@@ -54,9 +75,10 @@ cat <<endofmessage
 specify the vlan number for config creation
 --------------------------------------
 (4) vlan 4  (hadoop)    - 10.1.4.0/22
-(8) vlan 8  (mgmt)      - 10.1.8.0/23
+(5) vlan 5  (mgmt)      - 10.1.8.0/23
 (9) vlan 9  (rhev)      - 10.1.32.0/19
 (16) vlan 16 (cloudprv) - 172.16.0.0/18
+(17) vlan 17 (dev)      - 10.1.253.0/24
 --------------------------------------
 ===========================================
 endofmessage
@@ -73,6 +95,7 @@ specify the vlan number for config creation
 (6) vlan 6  (cloudpub)  - 10.1.16.0/20
 (9) vlan 9  (rhev)      - 10.1.32.0/19
 (16) vlan 16 (cloudprv) - 172.16.0.0/18
+(17) vlan 17 (dev)      - 10.1.253.0/24
 --------------------------------------
 ===========================================
 endofmessage
@@ -87,9 +110,10 @@ specify the vlan number for config creation
 --------------------------------------
 (4) vlan 4  (hadoop)    - 10.1.4.0/22
 (6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(8) vlan 8  (mgmt)      - 10.1.8.0/23
+(5) vlan 5  (mgmt)      - 10.1.8.0/23
 (9) vlan 9  (rhev)      - 10.1.32.0/19
 (16) vlan 16 (cloudprv) - 172.16.0.0/18
+(17) vlan 17 (dev)      - 10.1.253.0/24
 --------------------------------------
 ===========================================
 endofmessage
@@ -150,7 +174,7 @@ EOF
 vlan_create_mgmt()
 {  # create
 cat > /tmp/ifcfg-mgmt << EOF
-DEVICE=bond0.8
+DEVICE=bond0.5
 ONBOOT=yes
 VLAN=yes
 BOOTPROTO=none
@@ -176,26 +200,52 @@ EOF
 vlan_create_cloudprv()
 {  # generage ifcfg-bond0.16
 cat > /tmp/ifcfg-bond0.16 << EOF
-DEVICE=bond0.16
-ONBOOT=yes
-VLAN=yes
-BOOTPROTO=none
-BRIDGE=cloudprv
+device=bond0.16
+onboot=yes
+vlan=yes
+bootproto=none
+bridge=cloudprv
 EOF
 }
 
 vlan_create_cloudprv_bridge()
 {  # generage ifcfg-cloudprv
 cat > /tmp/ifcfg-cloudprv << EOF
-DEVICE=cloudprv
-TYPE=Bridge
-ONBOOT=yes
-DELAY=0
-BOOTPROTO=static
-IPADDR=$vlanip
-NETMASK=255.255.192.0
-USERCTL=no
-NOZEROCONF=yes
+device=cloudprv
+type=bridge
+onboot=yes
+delay=0
+bootproto=static
+ipaddr=$vlanip
+netmask=255.255.192.0
+userctl=no
+nozeroconf=yes
+EOF
+}
+
+vlan_create_dev()
+{  # generage ifcfg-bond0.17
+cat > /tmp/ifcfg-bond0.17 << EOF
+device=bond0.17
+onboot=yes
+vlan=yes
+bootproto=none
+bridge=dev
+EOF
+}
+
+vlan_create_dev_bridge()
+{  # generage ifcfg-cloudprv
+cat > /tmp/ifcfg-dev << EOF
+device=dev
+type=bridge
+onboot=yes
+delay=0
+bootproto=static
+ipaddr=$vlanip
+netmask=255.255.255.0
+userctl=no
+nozeroconf=yes
 EOF
 }
 
@@ -220,6 +270,9 @@ case $ipaddr_short in
 	vlan_minus_rhev
 ;;
 
+'10.1.253')
+	vlan_minus_dev
+;;
 esac
 
 # prompt for VLAN choice
@@ -249,7 +302,7 @@ if [ $vlanadd = "6" ]; then
    bridgename=cloudpub
 fi
 
-if [ $vlanadd = "8" ]; then
+if [ $vlanadd = "5" ]; then
    bridgename=mgmt
 fi
 
@@ -259,6 +312,10 @@ fi
 
 if [ $vlanadd = "16" ]; then
    bridgename=cloudprv
+fi
+
+if [ $vlanadd = "17" ]; then
+   bridgename=dev
 fi
 
 # refer to it's FQDN for the virtual interface
@@ -272,7 +329,8 @@ ipaddr_short_largenet=`echo $vlanip | awk -F "." '{print $1,$2}' | sed 's/ /./g'
 
 # ensure IP address has a valid DNS entry
 # since 172.16.0.0/18 is not DNS managed we skip the check
-if [ $ipaddr_short_largenet != '172.16' ]; then 
+# since 10.1.253 is not DNS managed we skip the check
+if [ $ipaddr_short_largenet != '172.16' ] && [ $ipaddr_short != '10.1.253'; then 
 
 case $vlaniphostdns in
 '1')
@@ -286,6 +344,7 @@ case $vlaniphostdns in
    echo "----------!! ERROR !!------------"
    echo "no valid DNS entry found for this address"
    echo "why don't you cry about it on twitter?"
+   echo "                                 "
    exit 1
 ;;
 esac
