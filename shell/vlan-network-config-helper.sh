@@ -404,4 +404,9 @@ case $vlanadd in
 '16')
    vlan_create_cloudprv
    vlan_create_cloudprv_bridge
+;;
+'17')
+   vlan_create_dev
+   vlan_create_dev_bridge
+;;
 esac
