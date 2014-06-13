@@ -38,7 +38,7 @@ calculate_transfer_total()
     avg_transfer=$(calculate_transfer_average)
     echo "                                      "
     echo "======================================"	
-    echo "Total Download for user $username"
+    echo "Download Stats for User $username"
     echo "--------------------------------------"
     echo "Kilobytes    :: $kb_transfer"
     echo "Gigabytes    :: $gb_transfer"
