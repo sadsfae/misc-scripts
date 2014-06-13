@@ -10,16 +10,16 @@
 username=$1
 log_location="/var/log/vsftpd.log"
 
-calculate_kb_transfer()
+calculate_byte_transfer()
 {   # grab the user amount
     cat $log_location | grep $username | grep "OK DOWNLOAD" | grep bytes \
     | awk -F "," '{print $3}' | sed 's/ bytes//' | awk '{s+=$1} END {print s}'
 }
 
 calculate_gb_transfer()
-{   # calculate kb to gb (kb/(1024*1024) or (kb/(1024^2)
-    kb_transfer=$(calculate_kb_transfer)
-    echo "(($kb_transfer) / (1024*1024))" | bc
+{   # calculate bytes to gb (1 gb = 1073741824 bytes)
+    byte_transfer=$(calculate_byte_transfer)
+    echo "$byte_transfer / 1073741824" | bc
 }
 
 calculate_transfer_average()
@@ -33,14 +33,14 @@ calculate_transfer_average()
 
 calculate_transfer_total()
 {   # generate summary
-    kb_transfer=$(calculate_kb_transfer)
+    byte_transfer=$(calculate_byte_transfer)
     gb_transfer=$(calculate_gb_transfer)
     avg_transfer=$(calculate_transfer_average)
     echo "                                      "
     echo "======================================"	
     echo "Download Stats for User $username"
     echo "--------------------------------------"
-    echo "Kilobytes    :: $kb_transfer"
+    echo "Bytes        :: $byte_transfer"
     echo "Gigabytes    :: $gb_transfer"
     echo "Average Rate :: $avg_transfer KB/sec" 
     echo "======================================"
