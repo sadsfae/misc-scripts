@@ -11,7 +11,8 @@ log_location="/var/log/vsftpd.log"
 
 calculate_kb_transfer()
 {   # grab the user amount
-    cat $log_location | grep $username | grep "OK DOWNLOAD" | grep bytes | awk -F "," '{print $3}' | sed 's/ bytes//' | awk '{s+=$1} END {print s}'
+    cat $log_location | grep $username | grep "OK DOWNLOAD" | grep bytes \
+    | awk -F "," '{print $3}' | sed 's/ bytes//' | awk '{s+=$1} END {print s}'
 }
 
 calculate_gb_transfer()
