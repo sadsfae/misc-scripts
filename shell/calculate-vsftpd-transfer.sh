@@ -10,6 +10,24 @@
 username=$1
 log_location="/var/log/vsftpd.log"
 
+check_valid_user()
+{   # check if user is blank
+if [ -z $username ];
+    then
+        echo "user is blank, please use ./calculate-vsftpd-transfer.sh username"
+        exit 1
+fi
+
+# check against /etc/passwd if user exists
+usercheck=$(echo `cat /etc/passwd | grep $username | wc -l`)
+case $usercheck in
+'0')
+    echo "specified user $username does not exist, quitting!"
+    exit 1
+;;
+esac
+}
+
 calculate_byte_transfer()
 {   # grab the user amount
     cat $log_location | grep $username | grep "OK DOWNLOAD" | grep bytes \
@@ -46,4 +64,5 @@ calculate_transfer_total()
     echo "======================================"
 }
 
+check_valid_user
 calculate_transfer_total
