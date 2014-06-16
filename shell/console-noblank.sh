@@ -14,7 +14,7 @@ check_blank()
 {  # check if settings are already applied
 case $kernelver in
 '2')
-   setting=`cat /etc/grub.conf | grep consoleblank | wc -l`
+   setting=`cat /boot/grub/grub.conf | grep consoleblank | wc -l`
    if [ $setting -ne 0 ]; then
       echo "Setting already active, quitting!"
       exit 1
@@ -34,11 +34,11 @@ set_consoleblank()
 {   # set the consoleblank=0 setting
 case $kernelver in
 '2')
-     sed -i 's/rhgb quiet/rhgb consoleblank=0 quiet/g' /etc/grub.conf
+     sed -i 's/rhgb quiet/rhgb consoleblank=0 quiet/g' /boot/grub/grub.conf
      echo "grub.conf modified, reboot to take effect"
 ;;
 '3')
-     sed -i 's/rhgb quiet/rhgb quiet consoleblank=0/g' grub
+     sed -i 's/rhgb quiet/rhgb quiet consoleblank=0/g' /etc/default/grub
      echo "grub2 config modified, regenerating kernel initrd.."
      grub2-mkconfig -o /boot/grub2/grub.cfg
      echo "you will need to reboot for changes to take effect"
