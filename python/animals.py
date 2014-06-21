@@ -18,7 +18,7 @@ def AnnounceAnimals(animal_choice):
         print 'You did not pick', animals[1], animals[2]
         noise = 'beemeeeeeeggfffg'
     elif animal_choice == animals[1]:
-        print 'You did not pick', animals[0], animals[2]
+        print 'You did not pick the', animals[0], 'or the', animals[2]
         noise = 'Roaaaaarrrrrrrrrrr'
     elif animal_choice == animals[2]:
         print 'You did not pick', animals[1], animals[0]
