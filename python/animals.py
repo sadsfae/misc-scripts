@@ -30,6 +30,7 @@ def AnnounceAnimals(animal_choice):
     print 'There are many like it but this one is yours, the', animal_choice
     print 'The %s goes %s' % (animal_choice,noise)
     print 'The first two letters are..', animal_choice[0], 'and', animal_choice[1]
+    print 'The word %s has %d letters!' % (animal_choice,len(animal_choice))
     return animal_choice
 
 def main():
