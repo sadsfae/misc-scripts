@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python
 # everybody needs hugs, track it using a dictionary
 # simple exercise to use python dictionary
 
