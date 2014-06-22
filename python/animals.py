@@ -15,13 +15,13 @@ animal_choice = str.lower(animal_choice)
 
 def AnnounceAnimals(animal_choice):
     if animal_choice == animals[0]:
-        print 'You did not pick', animals[1], animals[2]
+        print 'You did not pick the', animals[1], 'or the', animals[2]
         noise = 'beemeeeeeeggfffg'
     elif animal_choice == animals[1]:
         print 'You did not pick the', animals[0], 'or the', animals[2]
         noise = 'Roaaaaarrrrrrrrrrr'
     elif animal_choice == animals[2]:
-        print 'You did not pick', animals[1], animals[0]
+        print 'You did not pick the', animals[1], 'or the', animals[0]
         noise = 'RAARHJGHHGHGHARHARHGHAGHRHRRF!!!!!.. RUN FOR IT!!'
     elif animal_choice != animals[1] or animals[0] or animals[2]:
         print "%s is not a valid choice" % (animal_choice)
