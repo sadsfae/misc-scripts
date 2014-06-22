@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # simple insert and indexing for list of james bond
 
-import sys
-
 bondlist = ['craig', 'connery', 'moore']
 print 'James Bond actors in order of coolness are:', bondlist[:]
  
