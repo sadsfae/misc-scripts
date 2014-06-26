@@ -2,12 +2,13 @@
 # this tool gives you an easy way to generage ifcfg-* on Linux machines
 # when using bonding configs, our default is mode 4 for LACP
 # this will create necessary bonding configs on a host if they are
-# tagged on more than one VLAN.
+# tagged on more than one VLAN.  You are also prompted if you're using
+# a native VLAN in which case it sets your primary adapter appropriately.
 # this could be done in kickstart %post but I like the option of doing it selectively.
 # *** NOTE *** You MUST have the following pre-requisites
 # 1) proper VLAN switch configuration in place for the node
 # 2) DNS entries that exist on the correct network/map
-# ** the 172.16.0.0/18 network does not check for valid DNS
+# ** the 172.16.0.0/18, 10.1.254.0/24, 10.1.253.0/28, 10.1.253.16/28 networks do not check for valid DNS
 
 bondinterface=bond0
 
