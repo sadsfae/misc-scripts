@@ -8,7 +8,6 @@
 # 1) proper VLAN switch configuration in place for the node
 # 2) DNS entries that exist on the correct network/map
 # ** the 172.16.0.0/18 network does not check for valid DNS
-# ** the 10.1.253 network is also not DNS managed
 
 bondinterface=bond0
 
@@ -36,16 +35,52 @@ cat <<endofmessage
 =========== VLAN Helper 5000 ==============
 specify the vlan number for config creation
 --------------------------------------
-(4) vlan 4  (hadoop)    - 10.1.4.0/22
-(6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(5) vlan 5  (mgmt)      - 10.1.8.0/23
-(9) vlan 9  (rhev)      - 10.1.32.0/19
-(16) vlan 16 (cloudprv) - 172.16.0.0/18
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+(19) vlan 19 (dev3)      - 10.1.253.16/28
 --------------------------------------
 ===========================================
 endofmessage
+}
 
-vlanadd=$(head -n1)
+vlan_minus_dev2()
+{  # generate vlan options minus dev vlan
+cat <<endofmessage
+
+=========== VLAN Helper 5000 ==============
+specify the vlan number for config creation
+--------------------------------------
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(19) vlan 19 (dev3)      - 10.1.253.16/28
+--------------------------------------
+===========================================
+endofmessage
+}
+
+vlan_minus_dev3()
+{  # generate vlan options minus dev vlan
+cat <<endofmessage
+
+=========== VLAN Helper 5000 ==============
+specify the vlan number for config creation
+--------------------------------------
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+--------------------------------------
+===========================================
+endofmessage
 }
 
 vlan_minus_hadoop()
@@ -55,16 +90,17 @@ cat <<endofmessage
 =========== VLAN Helper 5000 ==============
 specify the vlan number for config creation
 --------------------------------------
-(6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(5) vlan 5  (mgmt)      - 10.1.8.0/23
-(9) vlan 9  (rhev)      - 10.1.32.0/19
-(16) vlan 16 (cloudprv) - 172.16.0.0/18
-(17) vlan 17 (dev)      - 10.1.253.0/24
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(17) vlan 17 (dev)       - 10.1.254.0/24
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+(19) vlan 19 (dev3)      - 10.1.253.16/28
 --------------------------------------
 ===========================================
 endofmessage
 
-vlanadd=$(head -n1)
 }
 
 vlan_minus_cloudpub()
@@ -74,11 +110,13 @@ cat <<endofmessage
 =========== VLAN Helper 5000 ==============
 specify the vlan number for config creation
 --------------------------------------
-(4) vlan 4  (hadoop)    - 10.1.4.0/22
-(5) vlan 5  (mgmt)      - 10.1.8.0/23
-(9) vlan 9  (rhev)      - 10.1.32.0/19
-(16) vlan 16 (cloudprv) - 172.16.0.0/18
-(17) vlan 17 (dev)      - 10.1.253.0/24
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(17) vlan 17 (dev)       - 10.1.254.0/24
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+(19) vlan 19 (dev3)      - 10.1.253.16/28
 --------------------------------------
 ===========================================
 endofmessage
@@ -91,11 +129,13 @@ cat <<endofmessage
 =========== VLAN Helper 5000 ==============
 specify the vlan number for config creation
 --------------------------------------
-(4) vlan 4  (hadoop)    - 10.1.4.0/22
-(6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(9) vlan 9  (rhev)      - 10.1.32.0/19
-(16) vlan 16 (cloudprv) - 172.16.0.0/18
-(17) vlan 17 (dev)      - 10.1.253.0/24
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(17) vlan 17 (dev)       - 10.1.254.0/24
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+(19) vlan 19 (dev3)      - 10.1.253.16/28
 --------------------------------------
 ===========================================
 endofmessage
@@ -108,12 +148,14 @@ cat <<endofmessage
 =========== VLAN Helper 5000 ==============
 specify the vlan number for config creation
 --------------------------------------
-(4) vlan 4  (hadoop)    - 10.1.4.0/22
-(6) vlan 6  (cloudpub)  - 10.1.16.0/20
-(5) vlan 5  (mgmt)      - 10.1.8.0/23
-(9) vlan 9  (rhev)      - 10.1.32.0/19
-(16) vlan 16 (cloudprv) - 172.16.0.0/18
-(17) vlan 17 (dev)      - 10.1.253.0/24
+(4)  vlan 4  (hadoop)    - 10.1.4.0/22
+(6)  vlan 6  (cloudpub)  - 10.1.16.0/20
+(5)  vlan 5  (mgmt)      - 10.1.8.0/23
+(9)  vlan 9  (rhev)      - 10.1.32.0/19
+(16) vlan 16 (cloudprv)  - 172.16.0.0/18
+(17) vlan 17 (dev)       - 10.1.254.0/24
+(18) vlan 18 (dev2)      - 10.1.253.0/28
+(19) vlan 19 (dev3)      - 10.1.253.16/28
 --------------------------------------
 ===========================================
 endofmessage
@@ -165,7 +207,7 @@ ONBOOT=yes
 DELAY=0
 BOOTPROTO=static
 IPADDR=$vlanip
-NETMASK=255.255.240.0
+NETMASK=255.255.255.240
 USERCTL=no
 NOZEROCONF=yes
 EOF
@@ -200,53 +242,124 @@ EOF
 vlan_create_cloudprv()
 {  # generage ifcfg-bond0.16
 cat > /tmp/ifcfg-bond0.16 << EOF
-device=bond0.16
-onboot=yes
-vlan=yes
-bootproto=none
-bridge=cloudprv
+DEVICE=bond0.16
+ONBOOT=yes
+VLAN=yes
+BOOTPROTO=none
+BRIDGE=cloudprv
 EOF
 }
 
 vlan_create_cloudprv_bridge()
 {  # generage ifcfg-cloudprv
 cat > /tmp/ifcfg-cloudprv << EOF
-device=cloudprv
-type=bridge
-onboot=yes
-delay=0
-bootproto=static
-ipaddr=$vlanip
-netmask=255.255.192.0
-userctl=no
-nozeroconf=yes
+DEVICE=cloudprv
+TYPE=bridge
+ONBOOT=yes
+DELAY=0
+BOOTPROTO=static
+IPADDR=$vlanip
+NETMASK=255.255.192.0
+USERCTL=no
+NOZEROCONF=yes
 EOF
 }
 
 vlan_create_dev()
 {  # generage ifcfg-bond0.17
 cat > /tmp/ifcfg-bond0.17 << EOF
-device=bond0.17
-onboot=yes
-vlan=yes
-bootproto=none
-bridge=dev
+DEVICE=bond0.17
+ONBOOT=yes
+VLAN=yes
+BOOTPROTO=none
+BRIDGE=dev
 EOF
 }
 
 vlan_create_dev_bridge()
 {  # generage ifcfg-cloudprv
 cat > /tmp/ifcfg-dev << EOF
-device=dev
-type=bridge
-onboot=yes
-delay=0
-bootproto=static
-ipaddr=$vlanip
-netmask=255.255.255.0
-userctl=no
-nozeroconf=yes
+DEVICE=dev
+TYPE=bridge
+ONBOOT=yes
+DELAY=0
+BOOTPROTO=static
+IPADDR=$vlanip
+NETMASK=255.255.255.0
+USERCTL=no
+NOZEROCONF=yes
 EOF
+}
+
+vlan_create_dev2()
+{  # generage ifcfg-bond0.17
+cat > /tmp/ifcfg-bond0.18 << EOF
+DEVICE=bond0.18
+ONBOOT=yes
+VLAN=yes
+BOOTPROTO=none
+BRIDGE=dev2
+EOF
+}
+
+vlan_create_dev2_bridge()
+{  # generage ifcfg-dev2
+cat > /tmp/ifcfg-dev2 << EOF
+DEVICE=dev2
+TYPE=bridge
+ONBOOT=yes
+DELAY=0
+BOOTPROTO=static
+IPADDR=$vlanip
+NETMASK=255.255.255.240
+USERCTL=no
+NOZEROCONF=yes
+EOF
+}
+
+vlan_create_dev3()
+{  # generage ifcfg-bond0.19
+cat > /tmp/ifcfg-bond0.19 << EOF
+DEVICE=bond0.19
+ONBOOT=yes
+VLAN=yes
+BOOTPROTO=none
+BRIDGE=dev3
+EOF
+}
+
+vlan_create_dev3_bridge()
+{  # generage ifcfg-dev3
+cat > /tmp/ifcfg-dev3 << EOF
+DEVICE=dev3
+TYPE=bridge
+ONBOOT=yes
+DELAY=0
+BOOTPROTO=static
+IPADDR=$vlanip
+NETMASK=255.255.255.240
+USERCTL=no
+NOZEROCONF=yes
+EOF
+}
+
+vlan_create_native()
+{ # generate ifcfg-bond0 
+cat > /tmp/ifcfg-bond0 << EOF
+DEVICE=bond0
+BOOTPROTO=static
+IPADDR=$vlanip
+NETMASK=CHANGEME
+BONDING_OPTS="mode=4 miimon=500"
+ONBOOT=yes
+USERCTL=no
+NOZEROCONF=yes
+EOF
+
+mynetmask=`grep NETMASK /tmp/ifcfg-$bridgename`
+
+sed -i -e "s/^NETMASK=CHANGEME/$mynetmask/g" /tmp/ifcfg-bond0
+
 }
 
 #### END FUNCTIONS ####
@@ -270,13 +383,48 @@ case $ipaddr_short in
 	vlan_minus_rhev
 ;;
 
-'10.1.253')
+'10.1.254')
 	vlan_minus_dev
+;;
+
+'10.1.253.0')
+	vlan_minus_dev2
+;;
+
+'10.1.253.16')
+	vlan_minus_dev3
 ;;
 esac
 
 # prompt for VLAN choice
-vlanadd=$(head -n1)
+#vlanadd=$(head -n1)
+read vlanadd
+
+echo "Generate configs for native VLAN [ y/n ]?"
+echo "                                         "
+#vlannative=$(head -n1)
+read vlannative
+
+# sanity check for vlan native
+
+if [ $vlannative != 'y' ] && \
+   [ $vlannative != 'Y' ] && \
+   [ $vlannative != 'n' ] && \
+   [ $vlannative != 'N' ] ; then 
+
+   echo "You must select 'y' or 'n'"
+   exit 1
+fi
+
+# obtain gateway for dev vlans
+case $vlanadd in
+'18')
+    vlandevgateway='10.1.253.15'
+;;
+'19')
+    vlandevgateway='10.1.253.30'
+;;
+esac
 
 # prompt for IP address of the VLAN
 # this is 2/2 of the interactive menus
@@ -288,7 +436,8 @@ on VLAN $vlanadd
 
 EndofMessage
 
-vlanip=$(head -n1)
+#vlanip=$(head -n1)
+read vlanip
 
 echo "---------------------------------"
 echo "checking if address is in use..."
@@ -318,6 +467,14 @@ if [ $vlanadd = "17" ]; then
    bridgename=dev
 fi
 
+if [ $vlanadd = "18" ]; then
+   bridgename=dev2
+fi
+
+if [ $vlanadd = "19" ]; then
+   bridgename=dev3
+fi
+
 # refer to it's FQDN for the virtual interface
 vlaniphost=`host $vlanip | awk '{print $NF}'`
 
@@ -329,8 +486,13 @@ ipaddr_short_largenet=`echo $vlanip | awk -F "." '{print $1,$2}' | sed 's/ /./g'
 
 # ensure IP address has a valid DNS entry
 # since 172.16.0.0/18 is not DNS managed we skip the check
-# since 10.1.253 is not DNS managed we skip the check
-if [ $ipaddr_short_largenet != '172.16' ] && [ $ipaddr_short != '10.1.253'; then 
+# since VLANS 17, 18, 19 are not DNS managed we'll skip the check
+if [ $ipaddr_short_largenet != '172.16' ] && \
+   [ $ipaddr_short != '10.1.254' ] && \
+   [ $ipaddr_short != '10.1.253' ] && \
+   [ $vlanadd != '17' ] && \
+   [ $vlanadd != '18' ] && \
+   [ $vlanadd != '19' ]; then 
 
 case $vlaniphostdns in
 '1')
@@ -367,6 +529,9 @@ case $(ip_free) in
 esac
 
 # generate the correct VLAN config
+
+if [ $vlannative != "y" ] && [ $vlannative != "Y" ]; then
+
 cat <<EndofMessage
 
 ===================================================
@@ -388,6 +553,33 @@ cp /tmp/ifcfg-$bridgename /etc/sysconfig/network-scripts/
 
 EndofMessage
 
+else
+
+cat <<EndofMessage
+
+===================================================
+---------------------------------------------------
+VLAN configs for $vlanip on NATIVE VLAN: $vlanadd 
+created for $vlaniphost
+
+1) /tmp/ifcfg-bond0
+
+** copy this into place after review **
+
+cp /tmp/ifcfg-bond0 /etc/sysconfig/network-scripts/
+
+2) EDIT your gateway to reflect the right native VLAN 
+
+sed -i 's/GATEWAY=.*$/GATEWAY=$vlandevgateway
+
+** issue 'service network restart' to take effect
+---------------------------------------------------
+===================================================
+
+EndofMessage
+
+fi
+
 case $vlanadd in
 '4')
    vlan_create_hadoop
@@ -406,7 +598,20 @@ case $vlanadd in
    vlan_create_cloudprv_bridge
 ;;
 '17')
-   vlan_create_dev
+   vlan_create_dev 
    vlan_create_dev_bridge
 ;;
+'18')
+   vlan_create_dev2
+   vlan_create_dev2_bridge
+;;
+'19')
+   vlan_create_dev3
+   vlan_create_dev3_bridge
+;;
 esac
+
+if [ "$vlannative" == "y" ] || [ "$vlannative" == "Y" ]; then
+  vlan_create_native
+fi
+
