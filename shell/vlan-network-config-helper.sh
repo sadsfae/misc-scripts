@@ -539,12 +539,12 @@ cat <<EndofMessage
 VLAN configs for $vlanip on VLAN: $vlanadd created
 for $vlaniphost
 
-1) /tmp/ifcfg-bond0.$vlanadd
-2) /tmp/ifcfg-$bridgename
+1) /tmp/ifcfg-$bondinterface.$vlanadd
+2) /tmp/ifcfg-$bondinterface.$bridgename
 
 ** copy these into place after review **
 
-cp /tmp/ifcfg-bond0.$vlanadd /etc/sysconfig/network-scripts/
+cp /tmp/ifcfg-$bondinterface$vlanadd /etc/sysconfig/network-scripts/
 cp /tmp/ifcfg-$bridgename /etc/sysconfig/network-scripts/
 
 ** issue 'service network restart' to take effect
@@ -562,11 +562,11 @@ cat <<EndofMessage
 VLAN configs for $vlanip on NATIVE VLAN: $vlanadd 
 created for $vlaniphost
 
-1) /tmp/ifcfg-bond0
+1) /tmp/ifcfg-$bondinterface
 
 ** copy this into place after review **
 
-cp /tmp/ifcfg-bond0 /etc/sysconfig/network-scripts/
+cp /tmp/ifcfg-$bondinterface /etc/sysconfig/network-scripts/
 
 2) EDIT your gateway to reflect the right native VLAN 
 
