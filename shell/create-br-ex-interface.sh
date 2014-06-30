@@ -3,21 +3,21 @@
 # assumes your primary interface is called "bond0"
 # assumes you're running a Red Hat based distribution
 
-check_os_version()
-{  # check /etc/redhat-release
-   cat /etc/redhat-release | awk '{print $1}'
+detect_os()
+{  # EL6 kernel will be 2.6.x kernel, EL7+ or Fedora will be 3.x
+   kernelver=`uname -a | awk '{print $3}' | awk -F "." '{print $1}'`
 }
 
-os_version=$(check_os_version)
+os_version=$(detect_os)
 
 start_ovs()
 {
 case $os_version in
-'Fedora')
+'3')
 	systemctl enable openvswitch.service
 	systemctl start openvswitch.service
 ;;
-'Red')
+'2')
 	chkconfig --add openvswitch
         service openvswitch start
 ;;
