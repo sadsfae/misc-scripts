@@ -11,7 +11,7 @@ oslab_networker=(host03)
 oslab_storage=(host04 host05 host06)
 dump_date=$(/bin/date +%Y%m%d%H%M)
 mysqldump=`which mysqldump`
-mysqldump_opts='--all-databases --opt --single-transaction --master-data'
+mysqldump_opts='--all-databases --opt --single-transaction --master-data --events'
 myssh='ssh -o StrictHostKeyChecking=false'
 
 #### BEGIN BACKUPS ####
@@ -83,8 +83,8 @@ done
 
 ## DATABASE ##
 oslab_backup_mysql() {
-   $myssh root@$x "$mysqldump $mysqldump_opts 2>&1 >/dev/null | /usr/bin/gzip - > \
-   /mnt/backups/$x/mysqldump-oslab-${dump_date}.gz"
+   $myssh root@$x "$mysqldump $mysqldump_opts | /usr/bin/gzip - > \
+   /mnt/backups/$x/mysqldump-oslab-${dump_date}.gz 2>&1 >/dev/null"
 }
 
 #### END BACKUPS ####
