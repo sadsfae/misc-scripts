@@ -4,6 +4,7 @@
 # backup nova, glance, cinder, neutron, keystone configs, database
 # requires $myssh key forwarding and keys in place
 # requires NFS storage mounted on the host under /mnt/backups/$myhost
+# my example utilizes 3-replica Gluster storage for cinder/glance
 
 oslab_nodes=(host07 host08 host09 host10 host11 host12 host13 host14) 
 oslab_controller=(host02)
@@ -33,8 +34,7 @@ oslab_backup_var_lib_nova() {
 
 for x in ${oslab_nodes[@]}; do
 echo "backing up /var/lib/nova on $x";
-oslab_backup_var_lib_nova;
-echo "/var/lib/nova backup complete on $x";
+oslab_backup_var_lib_nova &;
 done
 
 ## GLANCE ##
@@ -42,9 +42,9 @@ oslab_backup_var_lib_glance() {
    $myssh root@$x "rsync -av --progress /srv/gluster/glance /mnt/backups/$x/" 2>&1 >/dev/null
 }
 
-for x in ${oslab_storage[@]}; do
+for x in ${oslab_storage[0]}; do
 echo "backing up /srv/gluster/glance on $x";
-oslab_backup_var_lib_glance; 
+oslab_backup_var_lib_glance &; 
 echo "/srv/gluster/glance backup complete on $x";
 done
 
@@ -53,10 +53,9 @@ oslab_backup_var_lib_cinder() {
    $myssh root@$x "rsync -av --progress /srv/gluster/cinder /mnt/backups/$x/" 2>&1 >/dev/null
 }
 
-for x in ${oslab_storage[@]}; do
+for x in ${oslab_storage[0]}; do
 echo "backing up /srv/gluster/cinder on $x";
-oslab_backup_var_lib_cinder; 
-echo "/srv/gluster/cinder backup complete on $x";
+oslab_backup_var_lib_cinder &; 
 done
 
 ## NEUTRON ##
@@ -96,10 +95,7 @@ oslab_backup_mysql;
 echo "MySQL backup complete on $x";
 done
 
-for x in ${oslab_networker[@]}; do
-echo "backing up MySQL database on $x";
-oslab_backup_mysql; 
-echo "MySQL backup complete on $x";
-done
-
 #### END DB BACKUPS ####
+
+wait
+echo "All Backups Complete!"
