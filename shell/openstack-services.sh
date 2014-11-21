@@ -1,8 +1,9 @@
 #!/bin/sh
 # loop through all oslab nodes and start or stop services
-# do the neutron and controller node last.
+# do the neutron and controller node first.
 
-oslab_nodes=( host01.oslab.openstack.example.com \
+oslab_nodes=( host02.oslab.openstack.example.com \
+             host03.oslab.openstack.example.com \
              host07.oslab.openstack.example.com \
              host08.oslab.openstack.example.com \
              host09.oslab.openstack.example.com \
@@ -12,9 +13,7 @@ oslab_nodes=( host01.oslab.openstack.example.com \
              host13.oslab.openstack.example.com \
              host14.oslab.openstack.example.com \
              host15.oslab.openstack.example.com \
-             host16.oslab.openstack.example.com \
-             host03.oslab.openstack.example.com \
-	     host02.oslab.openstack.example.com \
+             host01.oslab.openstack.example.com \
 )
 
 oslab_stop_services() {
