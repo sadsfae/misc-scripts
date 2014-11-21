@@ -34,7 +34,7 @@ oslab_backup_var_lib_nova() {
 
 for x in ${oslab_nodes[@]}; do
 echo "backing up /var/lib/nova on $x";
-oslab_backup_var_lib_nova &;
+oslab_backup_var_lib_nova &
 done
 
 ## GLANCE ##
@@ -44,7 +44,7 @@ oslab_backup_var_lib_glance() {
 
 for x in ${oslab_storage[0]}; do
 echo "backing up /srv/gluster/glance on $x";
-oslab_backup_var_lib_glance &; 
+oslab_backup_var_lib_glance & 
 echo "/srv/gluster/glance backup complete on $x";
 done
 
@@ -55,7 +55,7 @@ oslab_backup_var_lib_cinder() {
 
 for x in ${oslab_storage[0]}; do
 echo "backing up /srv/gluster/cinder on $x";
-oslab_backup_var_lib_cinder &; 
+oslab_backup_var_lib_cinder & 
 done
 
 ## NEUTRON ##
