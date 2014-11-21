@@ -13,7 +13,7 @@ oslab_storage=(host04 host05 host06)
 dump_date=$(/bin/date +%Y%m%d%H%M)
 mysqldump=`which mysqldump`
 mysqldump_opts='--all-databases --opt --single-transaction --master-data --events'
-myssh='ssh -o StrictHostKeyChecking=false'
+myssh='ssh -n -o StrictHostKeyChecking=false'
 
 #### BEGIN BACKUPS ####
 
