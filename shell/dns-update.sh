@@ -5,7 +5,6 @@
 # it would be foolish to buy an appliance to manage this.
 
 nsupdate=`which nsupdate`
-#nsupdate=cat
 
 ########## FUNCTIONS ##########
 dns_add_forward()
@@ -111,7 +110,6 @@ Enter the appropriate action
 Endofmessage
 
 action=$(head -n1)
-
 
 ########## ADD NEW DNS ENTRY SECTION ##########
 
