@@ -46,7 +46,7 @@ check_repoutils() {
 }
 
 pkglist=`wget -q -O - $remote_repo | grep rpm | sed 's/.*href="\(.*rpm\)">.*/\1/'`
-rpmcount=`ls $local_repo | grep *.rpm |wc -l`
+
 # sync our remote repo
 pull_repo() {
 	echo "syncing RPM's from $remote_repo"
