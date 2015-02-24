@@ -38,8 +38,8 @@ check_repoutils() {
 	
 	elif [[ $wget_installed = '0' ]]
         then
-		echo "createrepo not installed.. installing"
-		yum install createrepo -y >/dev/null 2>&1
+		echo "wget not installed.. installing"
+		yum install wget -y >/dev/null 2>&1
 	else
                 echo "[OK]"
         fi
