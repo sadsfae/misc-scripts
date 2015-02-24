@@ -57,7 +57,7 @@ pull_repo() {
           if [ -f $local_repo/$pkg ] && rpm -qp $local_repo/$pkg 1>/dev/null 2>&1 ; then
             :
           else
-            wget -nc -q -O - $remote_repo $pkg > $local_repo/$pkg 
+            wget -nc -q -O - $remote_repo/$pkg > $local_repo/$pkg 
           fi
         done 
 	echo "RPM pull complete!"
