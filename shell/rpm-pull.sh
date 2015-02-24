@@ -12,6 +12,18 @@ if [[ $# -eq 0 ]]; then
         exit 1
 fi
 
+# check if local_repo dir exists
+if [[ ! -d $2 ]]; then
+        echo "local directory $2 does not exist, creating!"
+        mkdir -p $2
+fi
+
+# if local_repo is unable to be created, quit
+if [[ ! -d $2 ]]; then
+        echo "unable to create $2, check permissions."
+        exit 1
+fi
+
 createrepo_installed=`rpm -qa | grep createrepo |wc -l`
 wget_installed=`rpm -qa | grep wget|wc -l`
 
@@ -39,11 +51,18 @@ rpmcount=`ls $local_repo | grep *.rpm |wc -l`
 pull_repo() {
 	echo "syncing RPM's from $remote_repo"
 	echo "..this may take a while"
-	for pkg in $pkglist ; do wget -nc -q -O - $remote_repo $pkg > $local_repo/$pkg ; done 
+	for pkg in $pkglist ; do 
+          # assume if we have a local file with target name
+          # and its a valid RPM file, then we dont need to pull
+          if [ -f $local_repo/$pkg ] && rpm -qp $local_repo/$pkg 1>/dev/null 2>&1 ; then
+            :
+          else
+            wget -nc -q -O - $remote_repo $pkg > $local_repo/$pkg 
+          fi
+        done 
 	echo "RPM pull complete!"
 	echo "creating new repo structure in $local_repo"
 	cd $local_repo ; createrepo . >/dev/null 2>&1
-        echo "------------------"
 	echo "Job's done!"
 	echo "                  "
 	rpmcount=`ls $local_repo | grep *.rpm |wc -l`
