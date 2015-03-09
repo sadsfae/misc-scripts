@@ -1,3 +1,4 @@
+#!/bin/bash
 # backup libvirt data to a remote NFS share once a day at 14:00
 # rsync will let us incrementally copy changed blocks
 # we'll run this daily via:
