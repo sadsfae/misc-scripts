@@ -1,6 +1,9 @@
 # tool to pull down remote RPM's on RHEL, CentOS, Fedora
 # and create a local yum repo
+# we use this in lieu of reposync because not all remote http
+# locations will properly have repo format
 # requires createrepo and wget, will install if needed
+#
 # USAGE :: ./rpm-pull.sh $REMOTEREPO $LOCALREPO
 
 remote_repo=$1
@@ -61,7 +64,14 @@ pull_repo() {
           fi
         done 
 	echo "RPM pull complete!"
-	echo "creating new repo structure in $local_repo"
+	  if [[ -d $local_repo/repodata ]]
+          then
+        	echo "removing old repodata"
+                rm -rf $local_repo/repodata
+		echo "creating new repo structure in $local_repo"
+	  else
+	        echo "creating new repo structure in $local_repo"
+	  fi
 	cd $local_repo ; createrepo . >/dev/null 2>&1
 	echo "Job's done!"
 	echo "                  "
