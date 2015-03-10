@@ -57,7 +57,7 @@ pull_repo() {
 	for pkg in $pkglist ; do 
           # assume if we have a local file with target name
           # and its a valid RPM file, then we dont need to pull
-          if [ -f $local_repo/$pkg ] && rpm -qp $local_repo/$pkg 1>/dev/null 2>&1 ; then
+          if [[ -f $local_repo/$pkg ]] && rpm -qp $local_repo/$pkg 1>/dev/null 2>&1 ; then
             :
           else
             wget -nc -q -O - $remote_repo/$pkg > $local_repo/$pkg 
