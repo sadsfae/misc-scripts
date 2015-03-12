@@ -1,3 +1,4 @@
+#!/bin/bash
 # tool to pull down all remote data via remote http
 # and create a local yum repo
 # similiar to rpm-pull but pulls all data/dir format
