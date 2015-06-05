@@ -139,7 +139,7 @@ source /root/keystonerc_admin
 cat <<EndofMessage
 
 ####################################
-#      OSLab Account Summary       #
+#         Account Summary          #
 ====================================
 Username:     $user_name
 Tenant:       $tenant_name
