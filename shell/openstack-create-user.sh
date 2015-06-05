@@ -82,7 +82,7 @@ create_tenant_securitygroup() {
 cat <<EndofMessage
 
 #####################################################
-#             OSLab Account Creator 6000            #
+#           OpenStack Account Creator 6000          #
 #                                                   #
 #####################################################
 
