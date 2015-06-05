@@ -10,6 +10,12 @@ EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 CONTROLLER_PUB_IP="1.1.1.1"
 USER_PASSWORD="changepassword"
 USER_DOMAIN="@example.com"
+TOKEN_DIR="/root/keystonerc.d"
+
+if ! [ -d $TOKEN_DIR ]
+then
+	mkdir -p $TOKEN_DIR
+fi
 
 get_id() {
   echo `"$@" | awk '/id / {print $4}'`
