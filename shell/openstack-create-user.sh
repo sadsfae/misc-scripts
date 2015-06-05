@@ -2,7 +2,7 @@
 # creates a new tenant/user
 # optionally creates a generic network and allows ICMP/SSH
 # usage :: run from openstack controller
-# usage :: i.e. 'source keystonerc_admin'
+# usage :: source keystonerc_admin
 # usage :: ./openstack-create-user.sh
 
 # replace this with the ID of your admin external network
@@ -10,6 +10,7 @@ EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 CONTROLLER_PUB_IP="1.1.1.1"
 USER_PASSWORD="changethis"
 USER_DOMAIN="@example.com"
+token_location="/root/keystonerc.d"
 
 get_id() {
   echo `"$@" | awk '/id / {print $4}'`
@@ -125,6 +126,12 @@ fi
 if [ $create_network == "1" ];
 then
 	create_tenant_network
+fi
+
+# copy users keystonerc token elsewhere
+if ! [ -d $token_location ];
+then
+	mkdir -p $token_location
 fi
 
 echo "moving keystonerc_$tenant_name to /root/keystonerc.d/.."
