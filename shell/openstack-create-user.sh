@@ -24,7 +24,8 @@ tenant_id=$(get_id keystone tenant-get ${tenant_name})
 	tenant_id=$(get_id keystone tenant-create --name=${tenant_name})
   fi
 
-  user_id=$(get_id keystone user-create --name=$user_name --pass=$USER_PASSWORD --email=${user_name}${USER_DOMAIN} --tenant=$tenant_id)
+  user_id=$(get_id keystone user-create --name=$user_name --pass=$USER_PASSWORD \
+  --email=${user_name}${USER_DOMAIN} --tenant=$tenant_id)
   member_id=$(get_id keystone role-get _member_)
   echo keystone user-role-add --tenant-id $tenant_id --user-id $user_id --role-id $member_id
 
