@@ -6,6 +6,7 @@
 # usage :: ./openstack-create-user.sh
 
 # specify your external admin network below
+
 EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 CONTROLLER_PUB_IP="1.1.1.1"
 USER_PASSWORD="changepassword"
@@ -118,7 +119,7 @@ fi
 # call function to create tenant and user
 if [ ! -z $tenant_name ] && [ ! -z $user_name ];
 then
-        create_tenant_user $tenant_name $user_name $USER_PASSWORD
+        create_tenant_user $tenant_name $user_name $USER_PASSWORD >/dev/null 2>&1
 else
 	echo "::ERROR:: either tenant or user is empty"
 	exit 1
@@ -127,7 +128,7 @@ fi
 # call function to create generic network
 if [ $create_network == "1" ];
 then
-        create_tenant_network
+        create_tenant_network >/dev/null 2>&1
 fi
 
 # summarize what we did
@@ -141,7 +142,7 @@ cat <<EndofMessage
 ====================================
 Username:     $user_name
 Tenant:       $tenant_name
-Tenant ID:    $(keystone tenant-get $tenant_name | grep id | awk '{print $4}')
+Tenant ID:    $(keystone tenant-get $tenant_name 2>/dev/null| grep id | awk '{print $4}')
 Network Name: $tenant_network_name
 Network ID:   $tenant_network_id
 ====================================
