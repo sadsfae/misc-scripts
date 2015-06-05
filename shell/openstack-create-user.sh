@@ -3,14 +3,13 @@
 # optionally creates a generic network and allows ICMP/SSH
 # usage :: run from openstack controller
 # usage :: source keystonerc_admin
-# usage :: ./openstack-create-user.sh
+# usage :: ./oslab-create-user.sh
 
-# replace this with the ID of your admin external network
+# specify your external admin network below
 EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 CONTROLLER_PUB_IP="1.1.1.1"
-USER_PASSWORD="changethis"
+USER_PASSWORD="changepassword"
 USER_DOMAIN="@example.com"
-token_location="/root/keystonerc.d"
 
 get_id() {
   echo `"$@" | awk '/id / {print $4}'`
@@ -24,11 +23,11 @@ tenant_id=$(get_id keystone tenant-get ${tenant_name})
 	tenant_id=$(get_id keystone tenant-create --name=${tenant_name})
   fi
 
-  user_id=$(get_id keystone user-create --name=$user_name --pass=$password --email=${user_name}${USER_DOMAIN})
+  user_id=$(get_id keystone user-create --name=$user_name --pass=$USER_PASSWORD --email=${user_name}${USER_DOMAIN} --tenant=$tenant_id)
   member_id=$(get_id keystone role-get _member_)
   echo keystone user-role-add --tenant-id $tenant_id --user-id $user_id --role-id $member_id
 
-cat > keystonerc_${user_name} <<EOF
+cat > /root/keystonerc.d/keystonerc_${user_name} <<EOF
 export OS_TENANT_NAME=$tenant_name
 export OS_USERNAME=$user_name
 export OS_PASSWORD=$USER_PASSWORD
@@ -45,22 +44,22 @@ create_tenant_network() {
   tenant_subnet_net=192.168.1.0
   tenant_created_id=$(keystone tenant-get $tenant_name | grep id | awk '{print $4}')
 
-  # source newly created keystonerc so we create network as that user
-  source /root/keystonerc.d/keystonerc_$user_name
+# source newly created keystonerc so we create network as that user
+source /root/keystonerc.d/keystonerc_$user_name
 
-  # create new network, subnet and router
-  neutron net-create $tenant_network_name
-  neutron subnet-create $tenant_network_name $tenant_subnet_net/24 --name $tenant_subnet_name
-  neutron router-create $tenant_router_name
+# create new network, subnet and router
+neutron net-create $tenant_network_name
+neutron subnet-create $tenant_network_name $tenant_subnet_net/24 --name $tenant_subnet_name
+neutron router-create $tenant_router_name
 
-  # obtain newly created router, network and subnet id
-  tenant_router_id=$(neutron router-list | grep $tenant_router_name | awk '{print $2}')
-  tenant_subnet_id=$(neutron subnet-list | grep $tenant_subnet_name | awk '{print $2}')
-  tenant_network_id=$(neutron net-list | grep $tenant_network_name | awk '{print $2}')
+# obtain newly created router, network and subnet id
+tenant_router_id=$(neutron router-list | grep $tenant_router_name | awk '{print $2}')
+tenant_subnet_id=$(neutron subnet-list | grep $tenant_subnet_name | awk '{print $2}')
+tenant_network_id=$(neutron net-list | grep $tenant_network_name | awk '{print $2}')
 
-  # associate router and add interface to the router
-  neutron router-gateway-set $tenant_router_id $EXTERNAL_NET_ID
-  neutron router-interface-add $tenant_router_id $tenant
+# associate router and add interface to the router
+neutron router-gateway-set $tenant_router_id $EXTERNAL_NET_ID
+neutron router-interface-add $tenant_router_id $tenant_subnet_id
 }
 
 create_tenant_securitygroup() {
@@ -82,11 +81,14 @@ create_tenant_securitygroup() {
 cat <<EndofMessage
 
 #####################################################
-#                Account Creator 6000               #
+#             OSLab Account Creator 6000            #
 #                                                   #
 #####################################################
 
 EndofMessage
+
+# source admin token again
+source /root/keystonerc_admin
 
 echo -en "Enter Tenant name (defaults to username): "
 read tenant_name
@@ -125,19 +127,13 @@ fi
 # call function to create generic network
 if [ $create_network == "1" ];
 then
-	create_tenant_network
+        create_tenant_network
 fi
-
-# copy users keystonerc token elsewhere
-if ! [ -d $token_location ];
-then
-	mkdir -p $token_location
-fi
-
-echo "moving keystonerc_$tenant_name to /root/keystonerc.d/.."
-mv keystonerc_$user_name /root/keystonerc.d/
 
 # summarize what we did
+# source admin again to obtain tenant id
+source /root/keystonerc_admin
+
 cat <<EndofMessage
 
 ####################################
