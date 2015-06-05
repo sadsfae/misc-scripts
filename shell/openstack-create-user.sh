@@ -6,7 +6,6 @@
 # usage :: ./openstack-create-user.sh
 
 # specify your external admin network below
-
 EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 CONTROLLER_PUB_IP="1.1.1.1"
 USER_PASSWORD="changepassword"
