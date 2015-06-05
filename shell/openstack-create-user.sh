@@ -129,6 +129,7 @@ fi
 if [ $create_network == "1" ];
 then
         create_tenant_network >/dev/null 2>&1
+        create_tenant_securitygroup >/dev/null 2>&1
 fi
 
 # summarize what we did
