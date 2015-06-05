@@ -3,7 +3,7 @@
 # optionally creates a generic network and allows ICMP/SSH
 # usage :: run from openstack controller
 # usage :: source keystonerc_admin
-# usage :: ./oslab-create-user.sh
+# usage :: ./openstack-create-user.sh
 
 # specify your external admin network below
 EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
