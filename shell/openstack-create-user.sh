@@ -17,7 +17,6 @@ get_id() {
 }
 
 create_tenant_user() {
-
 tenant_id=$(get_id keystone tenant-get ${tenant_name})
   if [[ -z $tenant_id ]]
   then
