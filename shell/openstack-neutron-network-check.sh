@@ -1,8 +1,13 @@
 #!/bin/bash
-# monitoring tool that spins up an instance, assigns floating ip
-# and tests connectivity.
-# designed to be utilized by a monitoring system like nagios, sensu etc.
+# nagios check script to:
+# 1) spin up an instance and attach floating ip
+# 2) ping the floating ip
+# 3) ssh into the instance and check metadata service is working
+# 4) tear down instance, record return status for pass/fail
+# ** use in conjunction with openstack-neutron-network-check-wrapper.sh
+
 # external network is: c63b3ed6-3819-48c5-a286-d8727ad8c985
+# fedora image is:  2dadcc7b-3690-4a1d-97ce-011c55426477
 # cirros image is:  7006f873-25ca-48c7-8817-41f29506f88b
 
 function get_id () {
@@ -17,12 +22,13 @@ function cleanup () {
   if [ -n "$floatingip_id" ]; then
     neutron floatingip-delete "$floatingip_id" 1>/dev/null 2>&1
   fi
+  echo "I deleted $vm_id" >> /var/log/vm_delete.log
   nova delete  ${vm_id} 1>/dev/null 2>&1
   exit $exitcode
 }
 
-vm_name=test-$$-$(date +%s)
-image='7006f873-25ca-48c7-8817-41f29506f88b'
+vm_name=nagios-fip-check-$$-$(date +%s)
+image='2dadcc7b-3690-4a1d-97ce-011c55426477'
 flavor=m1.small
 
 keystonerc=/etc/nagios/keystonerc_admin
@@ -31,7 +37,7 @@ source $keystonerc
 
 exitcode=0
 
-BOOT=$(nova boot --flavor=${flavor} --image=${image} ${vm_name} 2>&1) 
+BOOT=$(nova boot --flavor=${flavor} --image=${image} --key-name=nagios ${vm_name} 2>&1) 
 rp=$?
 if [[ "$rp" -ne 0 ]]
 then
@@ -82,9 +88,9 @@ then
 fi
 
 # we need to give the instance a chance to initialize, and neutron to set things up
-# sleep for a minute
+# sleep for a bit
 
-sleep 120
+sleep 30
 
 PING=$(ping -c 3 $floatingip 2>&1)
 rp=$?
@@ -96,6 +102,18 @@ then
   exitcode=2
   cleanup
 fi
+
+# now try the ssh 
+# edit to your liking
+SSHRESULT=$(ssh -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=false -o ConnectTimeout=10 -i /var/spool/nagios/.ssh/id_rsa -q fedora@$floatingip hostname 2>&1)
+rp=$?
+if [[ "$rp" -ne 0 ]]
+then
+  echo "Neutron ERROR: unable to properly ssh to guest."
+  exitcode=2
+  cleanup
+fi
+
 
 FLOATINGIPRM=$(nova remove-floating-ip ${vm_id} ${floatingip} 2>&1)
 rp=$?
