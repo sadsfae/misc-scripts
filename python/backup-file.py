@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # tar and gpg encrypt a file or directory and copy it locally
 # the local destination could be a remote share or rsync'd location
-# e.g.
-# ./backup-file.py --recipient 0123 --data somefile --backup /backups 
-# --backupname backupfile --verbose on
 
 import argparse
 import sys
@@ -21,8 +18,19 @@ parser.add_argument("--verbose", help="increase verbosity output")
 # print help if no arguments are provided
 if len(sys.argv)==1:
     parser.print_help()
+    print """
+Example Usage:
+./backup-file.py --recipient 0123 --data somefile --backup /backups \
+--backupname backupfile --verbose on
+"""
     sys.exit(1)
+
 args=parser.parse_args()
+
+# error on bad input
+if not args:
+    print "ERROR, check syntax or input data"
+    sys.exit(1)
 
 # make a variable for timestamp, e.g. 2015471826
 timestamp = str(time.localtime().tm_year) + str(time.localtime().tm_mon) \
@@ -42,8 +50,8 @@ if args.verbose:
         print "Backup Name: " + args.backupname + timestamp
 
 # check if backup file exists
-if os.path.exists(args.backup + '/' + args.backupname + timestamp + '.tar.gz.gpg'):
-    print "ERROR, Backup Name: " + args.backupname + timestamp + " Exists!"
+if os.path.exists(os.path.join (args.backup, args.backupname + timestamp + '.tar.gz.gpg')):
+    print "ERROR, Backup Name: " + args.backupname + timestamp + " Exists!",
     sys.exit(1)
 
 # check if file open would succeed and you are using a sane location
