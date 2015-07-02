@@ -11,8 +11,7 @@ import time
 parser=argparse.ArgumentParser()
 parser.add_argument('--verbose', help="increase verbosity output")
 
-# force the main arguments to be required 
-# we have to do this because default argparse behavior is allow --argument as optional
+# force the main arguments to be required (and listed in help as such)
 requiredArgs=parser.add_argument_group('Required Arguments')
 requiredArgs.add_argument('--recipient', required=True, help="GPG recipient")
 requiredArgs.add_argument('--data', required=True, help="data to backup")
