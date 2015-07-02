@@ -7,7 +7,7 @@ import sys
 import os
 import time
 
-# define help argument
+# define optional verbose argument
 parser=argparse.ArgumentParser()
 parser.add_argument('--verbose', help="increase verbosity output")
 
@@ -33,7 +33,7 @@ args=parser.parse_args()
 
 # error on bad input
 if not args:
-    print "ERROR, check syntax or input data"
+    print "ERROR, check syntax and arguments"
     sys.exit(1)
 
 # make a variable for timestamp, e.g. 2015471826
