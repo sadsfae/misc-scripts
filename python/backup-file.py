@@ -7,13 +7,17 @@ import sys
 import os
 import time
 
-# define our arguments
+# define help argument
 parser=argparse.ArgumentParser()
-parser.add_argument('--recipient',help="GPG recipient")
-parser.add_argument('--data',help="data to backup")
-parser.add_argument('--backup',help="backup destination")
-parser.add_argument('--backupname',help="backup file name")
-parser.add_argument("--verbose", help="increase verbosity output")
+parser.add_argument('--verbose', help="increase verbosity output")
+
+# force the main arguments to be required 
+# we have to do this because default argparse behavior is allow --argument as optional
+requiredArgs=parser.add_argument_group('Required Arguments')
+requiredArgs.add_argument('--recipient', required=True, help="GPG recipient")
+requiredArgs.add_argument('--data', required=True, help="data to backup")
+requiredArgs.add_argument('--backup', required=True, help="backup destination")
+requiredArgs.add_argument('--backupname', required=True, help="backup file name")
 
 # print help if no arguments are provided
 if len(sys.argv)==1:
@@ -25,6 +29,7 @@ Example Usage:
 """
     sys.exit(1)
 
+# use the parse_args method for arguments
 args=parser.parse_args()
 
 # error on bad input
