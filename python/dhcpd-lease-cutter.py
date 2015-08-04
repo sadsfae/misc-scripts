@@ -38,4 +38,4 @@ call(["service", "dhcpd", "start"])
 
 # bounce foreman-proxy for good measure
 from subprocess import call
-all(["service", "foreman-proxy", "restart"])
+call(["service", "foreman-proxy", "restart"])
