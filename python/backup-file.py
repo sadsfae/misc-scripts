@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+# simple encryption/archival tool
 # tar and gpg encrypt a file or directory and copy it locally
 # the local destination could be a remote share or rsync'd location
 
 import argparse
 import sys
 import os
-import time
+import datetime
 
 # define optional verbose argument
 parser=argparse.ArgumentParser()
@@ -37,9 +38,7 @@ if not args:
     sys.exit(1)
 
 # make a variable for timestamp, e.g. 2015471826
-timestamp = str(time.localtime().tm_year) + str(time.localtime().tm_mon) \
-        + str(time.localtime().tm_mday) + str(time.localtime().tm_hour) \
-        + str(time.localtime().tm_min)
+timestamp = '-' + datetime.datetime.now().strftime('%Y%m%d%H%M')
 
 # print options if verbose is turned on
 if args.verbose:
