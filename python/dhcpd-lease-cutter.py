@@ -7,19 +7,16 @@
 
 import fileinput
 import shutil
-import time
+import datetime
 import subprocess
 
 # first, stop dhcpd temporarily
 from subprocess import call
 call(["service", "dhcpd", "stop"])
 
-timestamp = str(time.localtime().tm_year) + str(time.localtime().tm_mon) \
-        + str(time.localtime().tm_mday) + str(time.localtime().tm_hour) \
-        + str(time.localtime().tm_min)
-
 # backup existing dhcpd.leases file
-shutil.copy2('/var/lib/dhcpd/dhcpd.leases', '/var/lib/dhcpd/dhcpd.leases-' + timestamp)
+shutil.copy2('/var/lib/dhcpd/dhcpd.leases', '/var/lib/dhcpd/dhcpd.leases-' \
+        + datetime.datetime.now().strftime('%Y%m%d%H%M'))
 
 # in-place edit dhcpd.leases
 ignore = False
