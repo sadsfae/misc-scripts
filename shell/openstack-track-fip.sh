@@ -45,7 +45,7 @@ To disable the account run from controller:
 ------------------------------------------------
 
 source /root/keystonerc_admin
-keystone user-set $targname --disable
+openstack user set $targname --disable
 
 
 EndofMessage
