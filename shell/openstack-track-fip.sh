@@ -1,5 +1,7 @@
 #!/bin/bash
 # track down a tenant by floating IP address
+# this will display who currently has a floating IP address
+# based on either router-list or floatingip-list output.
 
 fip_address=$1
 
@@ -40,7 +42,7 @@ cat << EndofMessage
 
 ########### OpenStack IP Sleuth 3000 ###########
 #                                               
-# $fip_address resolves to:                     
+# $fip_address currently resolves to:                     
 #                                               
 #-----------------------------------------------
 # Tenant   = $targtenant                        
