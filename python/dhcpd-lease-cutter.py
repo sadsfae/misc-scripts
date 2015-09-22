@@ -12,7 +12,7 @@ import subprocess
 
 # first, stop dhcpd temporarily
 from subprocess import call
-call(["service", "dhcpd", "stop"])
+call(["/sbin/service", "dhcpd", "stop"])
 
 # backup existing dhcpd.leases file
 shutil.copy2('/var/lib/dhcpd/dhcpd.leases', '/var/lib/dhcpd/dhcpd.leases-' \
