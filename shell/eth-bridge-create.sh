@@ -68,6 +68,7 @@ create_br_int()
    /sbin/service network restart >/dev/null 2>&1
    echo "External Bridge: $bridgename created"
    /sbin/ifconfig $bridgename
+   echo "Note:: If you see issues with routing you may need to reboot"
 }
 
 # create br0 if it doesn't exist
