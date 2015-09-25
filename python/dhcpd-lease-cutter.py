@@ -31,8 +31,8 @@ for line in fileinput.input('/var/lib/dhcpd/dhcpd.leases', inplace=True):
 
 # start dhcpd back up again
 from subprocess import call
-call(["service", "dhcpd", "start"])
+call(["/sbin/service", "dhcpd", "start"])
 
 # bounce foreman-proxy for good measure
 from subprocess import call
-call(["service", "foreman-proxy", "restart"])
+call(["/sbin/service", "foreman-proxy", "restart"])
