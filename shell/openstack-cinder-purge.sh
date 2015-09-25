@@ -1,5 +1,5 @@
 #!/bin/sh
-# purge cinder volumes after 48hours
+# purge cinder volumes and snapshots after 48hours
 # cron entry:
 #SHELL=/bin/bash
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
