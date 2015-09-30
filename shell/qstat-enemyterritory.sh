@@ -22,7 +22,7 @@ qstat_cleanup() {
 
 qstat_generate() {
 	# generate generic status
-    /usr/bin/quakestat -woets $gameserver -P -raw "|" > /tmp/et.txt
+        /usr/bin/quakestat -woets $gameserver -P -raw "|" > /tmp/et.txt
 	srv=`cat /tmp/et.txt | awk -F "|" 'NR==1{print $2}'`
 	pc=`cat /tmp/et.txt | awk -F "|" 'NR==1{print $6}'`
 	pclimit=`cat /tmp/et.txt | awk -F "|" 'NR==1{print $5}'`
@@ -30,8 +30,8 @@ qstat_generate() {
 	gping=`cat /tmp/et.txt | awk -F "|" 'NR==1{print $7}'`
 	srvtype=`cat /tmp/et.txt | awk -F "|" 'NR==1{print $3}'`
 
-    # generate generic CSS template for status
-    cat > /tmp/et.html <<EOF
+        # generate generic CSS template for status
+        cat > /tmp/et.html <<EOF
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
