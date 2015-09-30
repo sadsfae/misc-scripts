@@ -3,7 +3,7 @@
 # requires qstat
 # requires convert (from imagemagick), html2ps for image conversion
 
-gameserver="funcamp.net"
+gameserver="example.com"
 
 qstat_cleanup() {
 	if [ -f /tmp/et.txt ]; then
