@@ -1,7 +1,10 @@
 #!/bin/bash
 # generate a simple HTML table with quakestat (qstat) data
-# requires quakestat
-# requires convert (from imagemagick), html2ps for image conversion
+# requires quakestat for HTML, convert and html2ps for image conversion
+# I use the following .html2psrc
+#BODY {
+#     font-size: 16pt;
+#     }
 
 gameserver="example.com"
 tmpfiles=(/tmp/et.txt /tmp/et.ps /tmp/et.html /tmp/etfull.txt)
@@ -58,7 +61,7 @@ EOF
     # HTML copy  
     cp /tmp/et.html /home/`whoami`/public_html/et.html
     # create image of HTML page
-    /usr/bin/html2ps /tmp/et.html > /tmp/et.ps
+    /usr/bin/html2ps -F /tmp/et.html > /tmp/et.ps
 	convert /tmp/et.ps /home/`whoami`/public_html/et.png
 }
 
