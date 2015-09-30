@@ -16,7 +16,7 @@ qstat_cleanup() {
 		rm -f /tmp/et.ps
 	fi
     	if [ -f /tmp/etfull.txt ]; then
-		rm -f /tmp/et.ps
+		rm -f /tmp/etfull.txt
 	fi
 }
 
