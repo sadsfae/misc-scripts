@@ -37,13 +37,12 @@ qstat_generate() {
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;}
 .tg .tg-edkc{font-size:28px;vertical-align:top}
-.tg .tg-2rv1{font-size:32px;vertical-align:top}
 .tg .tg-24i8{font-size:24px;vertical-align:top}
 </style>
 <table class="tg">
   <tr>
     <th class="tg-edkc">ADDRESS<br></th>
-    <th class="tg-2rv1">PLAYERS</th>
+    <th class="tg-edkc">PLAYERS</th>
     <th class="tg-edkc">MAP</th>
     <th class="tg-edkc">PING<br></th>
     <th class="tg-edkc">MOD/TYPE</th>
