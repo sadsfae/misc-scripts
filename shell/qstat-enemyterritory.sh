@@ -4,20 +4,14 @@
 # requires convert (from imagemagick), html2ps for image conversion
 
 gameserver="example.com"
+tmpfiles=(/tmp/et.txt /tmp/et.ps /tmp/et.html /tmp/etfull.txt)
 
 qstat_cleanup() {
-	if [ -f /tmp/et.txt ]; then
-		rm -f /tmp/et.txt
-	fi
-	if [ -f /tmp/et.html ]; then
-		rm -f /tmp/et.html
-	fi
-    	if [ -f /tmp/et.ps ]; then
-		rm -f /tmp/et.ps
-	fi
-    	if [ -f /tmp/etfull.txt ]; then
-		rm -f /tmp/etfull.txt
-	fi
+for i in ${tmpfiles[*]}; do
+        if [ -e $i ]; then
+                rm -f $i
+        fi
+done
 }
 
 qstat_generate() {
