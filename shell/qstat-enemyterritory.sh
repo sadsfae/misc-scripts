@@ -1,5 +1,5 @@
 #!/bin/bash
-# generate a simple HTML table with quakestat (qstat) data
+# generates simple CSS table with populated qstat data from a gameserver
 # requires qstat
 # requires convert (from imagemagick), html2ps for image conversion
 
@@ -52,7 +52,8 @@ qstat_generate() {
   </tr>
 </table>
 EOF
-	/usr/bin/html2ps /tmp/et.html > /tmp/et.ps
+	cp /tmp/et.html /home/`whoami`/public_html/et.html
+        /usr/bin/html2ps /tmp/et.html > /tmp/et.ps
 	convert /tmp/et.ps /home/`whoami`/public_html/et.png
 }
 
