@@ -55,7 +55,9 @@ qstat_generate() {
 EOF
     
     # generate player info and frags and append
-	/usr/bin/quakestat -woets $gameserver -P | tail -n+3 > /tmp/etfull.txt 
+    /usr/bin/quakestat -woets $gameserver -P | tail -n+3 > /tmp/etfull.txt 
+    # replace 'frags' with 'experience' since that's what qstat reports
+    sed -i -e 's/frags/experience/' /tmp/etfull.txt
     cat /tmp/etfull.txt | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
 		"<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> /tmp/et.html
     # HTML copy  
