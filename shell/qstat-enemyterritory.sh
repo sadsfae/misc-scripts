@@ -64,7 +64,7 @@ EOF
     cp /tmp/et.html /home/`whoami`/public_html/et.html
     # create image of HTML page
     /usr/bin/html2ps -F /tmp/et.html > /tmp/et.ps
-	convert /tmp/et.ps /home/`whoami`/public_html/et.png
+    convert /tmp/et.ps /home/`whoami`/public_html/et.png
 }
 
 qstat_cleanup
