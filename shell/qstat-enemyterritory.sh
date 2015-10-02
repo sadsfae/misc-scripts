@@ -77,7 +77,7 @@ qstat_generate() {
 </table>
 EOF
 
-    # generate generic CSS for table title
+    	# generate generic CSS for table title
     cat >> $ETHTML << EOF
 <table class="tg">
   <tr>
@@ -86,11 +86,11 @@ EOF
 <br>
 EOF
     
-    # generate player info and frags and append
-    /usr/bin/quakestat -woets $gameserver -P | tail -n+3 > $ETFULL 
-    # replace 'frags' with 'experience' since that's what qstat reports
-    sed -i -e 's/frags/experience/' /tmp/etfull.txt
-    cat $ETFULL | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
+    	# generate player info and frags and append
+    	/usr/bin/quakestat -woets $gameserver -P | tail -n+3 > $ETFULL 
+    	# replace 'frags' with 'experience' since that's what qstat reports
+    	sed -i -e 's/frags/experience/' /tmp/etfull.txt
+    	cat $ETFULL | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
 		"<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $ETHTML 
 }
 
@@ -117,13 +117,13 @@ EOF
 }
 
 html_convert() {
-    # merge the two HTML files
-    cat $ETPLAYERHTML >> $ETHTML  
-    # HTML copy  
-    cp $ETHTML $ETHOMEHTML
-    # create image of HTML page
-    /usr/bin/html2ps -F $ETHTML > $ETPS
-    convert $ETPS $ETHOMEIMG
+    	# merge the two HTML files
+    	cat $ETPLAYERHTML >> $ETHTML  
+    	# HTML copy  
+    	cp $ETHTML $ETHOMEHTML
+    	# create image of HTML page
+    	/usr/bin/html2ps -F $ETHTML > $ETPS
+    	convert $ETPS $ETHOMEIMG
 }
 
 cleanup_files
