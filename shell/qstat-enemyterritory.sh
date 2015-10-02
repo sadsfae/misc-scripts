@@ -10,6 +10,8 @@
 # http://funcamp.net/w/et.html
 # http://funcamp.net/w/et.png
 ########################################################################
+#   http://hobo.house/2015/09/30/play-enemy-territory/
+########################################################################
 
 gameserver="example.com"
 
