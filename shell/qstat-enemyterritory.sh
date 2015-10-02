@@ -78,7 +78,7 @@ qstat_generate() {
 EOF
 
     	# generate generic CSS for table title
-    cat >> $ETHTML << EOF
+        cat >> $ETHTML << EOF
 <table class="tg">
   <tr>
     <th class="tg-edkc">Current Players<br></th>
