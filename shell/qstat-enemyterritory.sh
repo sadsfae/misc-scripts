@@ -6,6 +6,10 @@
 #BODY {
 #     font-size: 16pt;
 #     }
+####################### Example Pages:##################################
+# http://funcamp.net/w/et.html
+# http://funcamp.net/w/et.png
+########################################################################
 
 gameserver="example.com"
 
@@ -75,12 +79,6 @@ EOF
 
     # generate generic CSS for table title
     cat >> $ETHTML << EOF
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;    background-color:#f0f0f0;}
-.tg .tg-edkc{font-size:28px;vertical-align:top}
-</style>
 <table class="tg">
   <tr>
     <th class="tg-edkc">Current Players<br></th>
@@ -107,12 +105,6 @@ daily_players() {
 generate_playerhtml() {
         # generate generic CSS for table title
         cat > $ETPLAYERHTML << EOF
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;    background-color:#f0f0f0;}
-.tg .tg-edkc{font-size:28px;vertical-align:top}
-</style>
 <table class="tg">
   <tr>
     <th class="tg-edkc">Recent Players<br></th>
