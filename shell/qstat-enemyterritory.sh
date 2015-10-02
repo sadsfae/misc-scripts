@@ -4,7 +4,7 @@
 # requires quakestat for HTML, convert and html2ps for image conversion
 # I use the following .html2psrc
 #BODY {
-#     font-size: 16pt;
+#     font-size: 11pt;
 #     }
 ####################### Example Pages:##################################
 # http://funcamp.net/w/et.html
@@ -120,7 +120,8 @@ html_convert() {
     	# merge the two HTML files
     	cat $ETPLAYERHTML >> $ETHTML  
     	# HTML copy  
-    	cp $ETHTML $ETHOMEHTML
+	rm -f $ETHOMEHTML
+	cp $ETHTML $ETHOMEHTML
     	# create image of HTML page
     	/usr/bin/html2ps -F $ETHTML > $ETPS
     	convert $ETPS $ETHOMEIMG
