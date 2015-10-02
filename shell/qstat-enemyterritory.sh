@@ -126,7 +126,6 @@ html_convert() {
     	# remove old image, convert new one
 	rm -f $ETHOMEIMG
 	convert $ETPS $ETHOMEIMG
-        
 }
 
 cleanup_files
