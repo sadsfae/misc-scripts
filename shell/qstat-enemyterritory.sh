@@ -120,11 +120,13 @@ html_convert() {
     	# merge the two HTML files
     	cat $ETPLAYERHTML >> $ETHTML  
     	# HTML copy  
-	rm -f $ETHOMEHTML
 	cp $ETHTML $ETHOMEHTML
     	# create image of HTML page
     	/usr/bin/html2ps -F $ETHTML > $ETPS
-    	convert $ETPS $ETHOMEIMG
+    	# remove old image, convert new one
+	rm -f $ETHOMEIMG
+	convert $ETPS $ETHOMEIMG
+        
 }
 
 cleanup_files
