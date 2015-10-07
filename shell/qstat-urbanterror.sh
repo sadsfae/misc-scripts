@@ -1,6 +1,6 @@
 #!/bin/bash
 # generate a simple HTML table with quakestat (qstat) data
-# this will also now parse logs and print recent players over past 24hrs
+# this will also parse logs and print recent players over past 24hrs
 # requires quakestat for HTML, convert and html2ps for image conversion
 # I use the following .html2psrc
 #BODY {
@@ -42,14 +42,14 @@ done
 }
 
 qstat_generate() {
-	    # generate generic status
+        # generate generic status
         /usr/bin/quakestat -q3s $gameserver -P -raw "|" > $UTTXT
-	    srv=`cat $UTTXT | awk -F "|" 'NR==1{print $2}'`
-	    pc=`cat $UTTXT | awk -F "|" 'NR==1{print $6}'`
-	    pclimit=`cat $UTTXT | awk -F "|" 'NR==1{print $5}'`
-	    gmap=`cat $UTTXT | awk -F "|" 'NR==1{print $4}'`
-	    gping=`cat $UTTXT | awk -F "|" 'NR==1{print $7}'`
-	    srvtype=`cat $UTTXT | awk -F "|" 'NR==1{print $3}'`
+        srv=`cat $UTTXT | awk -F "|" 'NR==1{print $2}'`
+        pc=`cat $UTTXT | awk -F "|" 'NR==1{print $6}'`
+        pclimit=`cat $UTTXT | awk -F "|" 'NR==1{print $5}'`
+        gmap=`cat $UTTXT | awk -F "|" 'NR==1{print $4}'`
+        gping=`cat $UTTXT | awk -F "|" 'NR==1{print $7}'`
+        srvtype=`cat $UTTXT | awk -F "|" 'NR==1{print $3}'`
 
         # generate generic CSS template for status
         cat > $UTHTML <<EOF
@@ -78,7 +78,7 @@ qstat_generate() {
 </table>
 EOF
 
-    	# generate generic CSS for table title
+        # generate generic CSS for table title
         cat >> $UTHTML << EOF
 <table class="tg">
   <tr>
@@ -86,18 +86,18 @@ EOF
 </tr>
 <br>
 EOF
-    
-    	# generate player info and frags and append
-    	/usr/bin/quakestat -q3s $gameserver -P | tail -n+3 > $UTFULL 
-    	cat $UTFULL | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
-		"<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $UTHTML 
+
+        # generate player info and frags and append
+        /usr/bin/quakestat -q3s $gameserver -P | tail -n+3 > $UTFULL 
+        cat $UTFULL | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
+	    "<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $UTHTML 
 }
 
 daily_players() {
         # get list of daily players in form of when someone disconnects
-	    # we are stripping out bot names
+        # we are stripping out bot names
         # note: Urban Terror doesn't allow space in names so we don't need additional awk
-        cat $UTLOG | grep "disconnected" | egrep -v "Johnny|Galgoci|Dane|Donquaz|Gunderson| \ 
+        cat $UTLOG | grep "disconnected" | egrep -v "Johnny|Galgoci|Dane|Donquaz|Toledo| \ 
             Dontavian" | awk '{print $3}' | sed 's/"//' | sed 's/\^7//' | sort | uniq -u > $UTPLAYERSHORT
 }
 
@@ -112,19 +112,19 @@ generate_playerhtml() {
 EOF
         # generate nice HTML of recent players
         cat $UTPLAYERSHORT | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
-                "<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $UTPLAYERHTML
+            "<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $UTPLAYERHTML
 }
 
 html_convert() {
-    	# merge the two HTML files
-    	cat $UTPLAYERHTML >> $UTHTML  
-    	# HTML copy  
-	    cp $UTHTML $UTHOMEHTML
-    	# create image of HTML page
-    	/usr/bin/html2ps -F $UTHTML > $UTPS
-    	# remove old image, convert new one
+        # merge the two HTML files
+        cat $UTPLAYERHTML >> $UTHTML  
+        #HTML copy  
+        cp $UTHTML $UTHOMEHTML
+        # create image of HTML page
+        /usr/bin/html2ps -F $UTHTML > $UTPS
+        # remove old image, convert new one
         rm -f $UTHOMEIMG
-	    convert $UTPS $UTHOMEIMG
+        convert $UTPS $UTHOMEIMG
 }
 
 cleanup_files
