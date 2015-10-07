@@ -98,7 +98,7 @@ daily_players() {
         # we are stripping out bot names
         # note: Urban Terror doesn't allow space in names so we don't need additional awk
         cat $UTLOG | grep "disconnected" | egrep -v "Johnny|Galgoci|Dane|Donquaz|Toledo| \ 
-            Dontavian" | awk '{print $3}' | sed 's/"//' | sed 's/\^7//' | sort | uniq -u > $UTPLAYERSHORT
+            Dontavian" | awk '{print $3}' | sed 's/"//' | sed 's/\^7//' | sort | uniq > $UTPLAYERSHORT
 }
 
 generate_playerhtml() {

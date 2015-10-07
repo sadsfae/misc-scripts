@@ -100,7 +100,7 @@ daily_players() {
         # get list of daily players in form of "G_xpsave_add: saved xp for $player"
 	# we are stripping out bot names
         cat $ETLOG | grep "saved xp" | egrep -v "Smitty|Heinrich|Tyrone|Hoganmueller| \
-                Bloogada|Galgoci|Deiter|Nelson|Hasselhoff|Leopold" | sort | uniq -u > $ETPLAYERLOG
+                Bloogada|Galgoci|Deiter|Nelson|Hasselhoff|Leopold" | sort | uniq > $ETPLAYERLOG
         # strip out only the players names, this will also pick up spaces
         cat $ETPLAYERLOG | awk '{$1=$2=$3=$4=""; print $0}' > $ETPLAYERSHORT
 }
