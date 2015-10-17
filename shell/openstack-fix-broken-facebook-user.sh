@@ -48,7 +48,7 @@ then
         return 1
 fi
 
-openstack user create --password $randpass --email $email_id --project $tenant_id $tenant_name
+openstack user create --password $randpass --email $email_id --project $tenant_id facebook$tenant_name
 
 set +x
 
