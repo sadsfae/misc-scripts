@@ -96,7 +96,7 @@ EOF
 
 daily_players() {
         # get list of daily players in form of "G_xpsave_add: saved xp for $player"
-    cat $ETLOG | grep "joined the" | egrep -v "[BOT]" | sort | uniq > $ETPLAYERLOG
+    cat $ETLOG | grep "joined the" | egrep -v '\[BOT\]' | sort | uniq > $ETPLAYERLOG
     # strip out only the players names, this will also pick up spaces
     cat $ETPLAYERLOG | awk '{ if ($4 == "joined") { print $3 } else { print $3,$4}}' | \
 		sed 's/"//' > $ETPLAYERSHORTRAW
