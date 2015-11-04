@@ -97,12 +97,12 @@ EOF
 }
 
 daily_players() {
-    # get list of daily players in form of "G_xpsave_add: saved xp for $player"
+    # list of recent players in form of "broadcast: print "sadsfae joined the Allies team\n"
     cat $ETLOG | grep "joined the" | egrep -v '\[BOT\]' | sort | uniq > $ETPLAYERLOG
-    # strip out only the players names, this will also pick up spaces
+    # strip out only the players names, this should also pick up spaces
     cat $ETPLAYERLOG | awk '{ if ($4 == "joined") { print $3 } else { print $3,$4}}' | \
 		sed 's/"//' > $ETPLAYERSHORTRAW
-    # because the logs contain ANSII characters we need to strip this out
+    # because names and characters in logs contain ANSII characters they need to be stripped
     perl -e 'use Term::ANSIColor; print color "white"; print "ABC\n"; print color "reset";' | \
 		perl -pe 's/\x1b\[[0-9;]*m//g' $ETPLAYERSHORTRAW > $ETPLAYERSHORTEAM
     # we might get matches for players joining both axis and allies we need uniq again
