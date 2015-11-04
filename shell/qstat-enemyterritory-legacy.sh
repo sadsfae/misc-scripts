@@ -1,4 +1,6 @@
 #!/bin/bash
+# written by: sadsfae (http://hobo.house) sadsfae@funcamp.net
+#
 # generate a simple HTML table with quakestat (qstat) data
 # this will also now parse logs and print recent players over past 24hrs
 # or whenver your log file rotates or changes.
@@ -6,10 +8,29 @@
 # there are parsing modifications needed for enemy territory:legacy that
 # are not needed for normal enemy territory, particularly how we record
 # "recent" players.
+# 
+# http://dev.etlegacy.com/projects/etlegacy/wiki/Links#section-3
+# 
+# EXAMPLE:
+# http://eu.funcamp.net:9999/et.html
+# http://eu.funcamp.net:9999/et.png
+#
+# for png generation:
 # I use the following .html2psrc
 #BODY {
 #     font-size: 16pt;
 #     }
+#
+# startup and "check-running" tools might be useful as well:
+# https://github.com/sadsfae/misc-scripts/blob/master/shell/etl-start-server.sh
+# https://github.com/sadsfae/misc-scripts/blob/master/shell/etl-check-server-running.sh
+#
+# CRON Entry:
+# --snip--
+# SHELL=/bin/bash
+# */3 * * * * cd /home/gaming_server/ETL/CURRENT && ./check_running.sh
+# --snip--
+# 
 
 gameserver="example.com"
 
