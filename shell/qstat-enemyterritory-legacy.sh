@@ -1,5 +1,5 @@
 #!/bin/bash
-# written by: sadsfae (http://hobo.house) sadsfae@funcamp.net
+# written by: sadsfae (http://hobo.house)
 #
 # generate a simple HTML table with quakestat (qstat) data
 # this will also now parse logs and print recent players over past 24hrs
