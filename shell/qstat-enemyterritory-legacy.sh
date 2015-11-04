@@ -1,6 +1,7 @@
 #!/bin/bash
 # generate a simple HTML table with quakestat (qstat) data
 # this will also now parse logs and print recent players over past 24hrs
+# or whenver your log file rotates or changes.
 # requires quakestat for HTML, convert and html2ps for image conversion
 # there are parsing modifications needed for enemy territory:legacy that
 # are not needed for normal enemy territory, particularly how we record
@@ -28,9 +29,10 @@ ETPLAYERSTRIP="/tmp/etplayerstrip.txt"
 ETPLAYERHTML="/tmp/etplayerstrip.html"
 ETPLAYERSHORTRAW="/tmp/etplayerstripshortraw.txt"
 ETPLAYERSHORT="/tmp/etplayerstripshort.txt"
+ETPLAYERSHORTEAM="/tmp/etplayerstripteams.txt"
 
 tmpfiles=($ETHTML $ETFULL $ETTXT $ETPS $ETPLAYERLOG $ETPLAYERSTRIP $ETPLAYERHTML \
-	  $ETPLAYERSHORT $ETPLAYERSHORTRAW)
+	  $ETPLAYERSHORT $ETPLAYERSHORTRAW $ETPLAYERSHORTEAM)
 
 cleanup_files() {
 for i in ${tmpfiles[*]}; do
@@ -41,17 +43,17 @@ done
 }
 
 qstat_generate() {
-	# generate generic status
-        /usr/bin/quakestat -woets $gameserver -P -raw "|" > $ETTXT
-	srv=`cat $ETTXT | awk -F "|" 'NR==1{print $2}'`
-	pc=`cat $ETTXT | awk -F "|" 'NR==1{print $6}'`
-	pclimit=`cat $ETTXT | awk -F "|" 'NR==1{print $5}'`
-	gmap=`cat $ETTXT | awk -F "|" 'NR==1{print $4}'`
-	gping=`cat $ETTXT | awk -F "|" 'NR==1{print $7}'`
-	srvtype=`cat $ETTXT | awk -F "|" 'NR==1{print $3}'`
+    # generate generic status
+    /usr/bin/quakestat -woets $gameserver -P -raw "|" > $ETTXT
+    srv=`cat $ETTXT | awk -F "|" 'NR==1{print $2}'`
+    pc=`cat $ETTXT | awk -F "|" 'NR==1{print $6}'`
+    pclimit=`cat $ETTXT | awk -F "|" 'NR==1{print $5}'`
+    gmap=`cat $ETTXT | awk -F "|" 'NR==1{print $4}'`
+    gping=`cat $ETTXT | awk -F "|" 'NR==1{print $7}'`
+    srvtype=`cat $ETTXT | awk -F "|" 'NR==1{print $3}'`
 
-        # generate generic CSS template for status
-        cat > $ETHTML <<EOF
+    # generate generic CSS template for status
+    cat > $ETHTML <<EOF
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
@@ -95,18 +97,20 @@ EOF
 }
 
 daily_players() {
-        # get list of daily players in form of "G_xpsave_add: saved xp for $player"
+    # get list of daily players in form of "G_xpsave_add: saved xp for $player"
     cat $ETLOG | grep "joined the" | egrep -v '\[BOT\]' | sort | uniq > $ETPLAYERLOG
     # strip out only the players names, this will also pick up spaces
     cat $ETPLAYERLOG | awk '{ if ($4 == "joined") { print $3 } else { print $3,$4}}' | \
 		sed 's/"//' > $ETPLAYERSHORTRAW
     # because the logs contain ANSII characters we need to strip this out
     perl -e 'use Term::ANSIColor; print color "white"; print "ABC\n"; print color "reset";' | \
-		perl -pe 's/\x1b\[[0-9;]*m//g' $ETPLAYERSHORTRAW > $ETPLAYERSHORT
+		perl -pe 's/\x1b\[[0-9;]*m//g' $ETPLAYERSHORTRAW > $ETPLAYERSHORTEAM
+    # we might get matches for players joining both axis and allies we need uniq again
+    cat $ETPLAYERSHORTEAM | uniq  > $ETPLAYERSHORT
 }
 
 generate_playerhtml() {
-        # generate generic CSS for table title
+    # generate generic CSS for table title
     cat > $ETPLAYERHTML << EOF
 <table class="tg">
   <tr>
@@ -114,7 +118,7 @@ generate_playerhtml() {
 </tr>
 <br>
 EOF
-        # generate nice HTML of recent players
+    # generate nice HTML of recent players
     cat $ETPLAYERSHORT | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print \
         	"<td>" $i"</td>";print "</tr>"} END{print "</table>"}' >> $ETPLAYERHTML
 }
