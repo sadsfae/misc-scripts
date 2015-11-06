@@ -1,11 +1,16 @@
 #!/bin/bash
 # written by: sadsfae (http://hobo.house)
 #
-# generate a simple HTML table with quakestat (qstat) data
-# this will also now parse logs and print recent players over past 24hrs
-# or whenver your log file rotates or changes.
-# requires quakestat for HTML, convert and html2ps for image conversion
-# there are parsing modifications needed for enemy territory:legacy that
+# This tool generates a simple CSS/HTML table with quakestat (qstat) data
+# of your Enemy Territory: Legacy server.
+# http://www.etlegacy.com/
+# It will also now parse logs and print recent players over past 24hrs
+# or whenever your log file rotates or changes.
+# -----------------------------------------------------------------------
+# REQUIRES: quakestat (qstat) for stats, ImageMagick, html2ps for images
+# REQUIRES: perl-Term-ANSIColor for stripping out ANSI in logs
+# -----------------------------------------------------------------------
+# There are parsing modifications needed for enemy territory:legacy that
 # are not needed for normal enemy territory, particularly how we record
 # "recent" players.
 # 
@@ -15,13 +20,13 @@
 # http://eu.funcamp.net:9999/et.html
 # http://eu.funcamp.net:9999/et.png
 #
-# for png generation:
+# For png generation:
 # I use the following .html2psrc
 #BODY {
 #     font-size: 16pt;
 #     }
 #
-# startup and "check-running" tools might be useful as well:
+# Startup and "check-running" tools might be useful as well:
 # https://github.com/sadsfae/misc-scripts/blob/master/shell/etl-start-server.sh
 # https://github.com/sadsfae/misc-scripts/blob/master/shell/etl-check-server-running.sh
 #
@@ -31,7 +36,10 @@
 # */3 * * * * cd /home/gaming_server/ETL/CURRENT && ./check_running.sh
 # --snip--
 # 
-
+#
+# Edit the below variables for your server environment and setup.
+###############################################################################
+# change this to your server
 gameserver="example.com"
 
 # variables for qstat generation
@@ -39,11 +47,18 @@ ETHTML="/tmp/et.html"
 ETFULL="/tmp/etfull.txt"
 ETTXT="/tmp/et.txt"
 ETPS="/tmp/et.ps"
+
+# change this accordingly, e.g. for Apache local public_html
+# https://httpd.apache.org/docs/2.4/howto/public_html.html
+# http://www.tuxradar.com/answers/457
 ETHOMEHTML="/home/`whoami`/public_html/et.html"
 ETHOMEIMG="/home/`whoami`/public_html/et.png"
 
 # variables for recent players
 DATE=`date +%Y%m%d`
+
+# for me this is a symlink, see:
+# https://github.com/sadsfae/misc-scripts/blob/master/shell/etl-start-server.sh
 ETLOG="/home/`whoami`/ETL/CURRENT_LOG"
 ETPLAYERLOG="/tmp/etplayers.txt"
 ETPLAYERSTRIP="/tmp/etplayerstrip.txt"
@@ -54,6 +69,7 @@ ETPLAYERSHORTEAM="/tmp/etplayerstripteams.txt"
 
 tmpfiles=($ETHTML $ETFULL $ETTXT $ETPS $ETPLAYERLOG $ETPLAYERSTRIP $ETPLAYERHTML \
 	  $ETPLAYERSHORT $ETPLAYERSHORTRAW $ETPLAYERSHORTEAM)
+###############################################################################
 
 cleanup_files() {
 for i in ${tmpfiles[*]}; do
@@ -119,6 +135,7 @@ EOF
 
 daily_players() {
     # list of recent players in form of "broadcast: print "sadsfae joined the Allies team\n"
+    # filter out bot names from showing up
     cat $ETLOG | grep "joined the" | egrep -v '\[BOT\]' | sort | uniq > $ETPLAYERLOG
     # strip out only the players names, this should also pick up spaces
     cat $ETPLAYERLOG | awk '{ if ($4 == "joined") { print $3 } else { print $3,$4}}' | \
@@ -126,7 +143,7 @@ daily_players() {
     # because names and characters in logs contain ANSII characters they need to be stripped
     perl -e 'use Term::ANSIColor; print color "white"; print "ABC\n"; print color "reset";' | \
 		perl -pe 's/\x1b\[[0-9;]*m//g' $ETPLAYERSHORTRAW > $ETPLAYERSHORTEAM
-    # we might get matches for players joining both axis and allies we need uniq again
+    # we might get matches for players joining both axis and allies, strip duplicates
     cat $ETPLAYERSHORTEAM | uniq  > $ETPLAYERSHORT
 }
 
