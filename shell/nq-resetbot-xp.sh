@@ -23,5 +23,5 @@ botlist=`quakestat -woets $etserver:$etport -P | egrep '\[BOT\]' | \
 	grep frags | awk '{print $4}'`
 
 # run reset command
-for x in $botlist; do sleep 1; $rconbin --rcon="$etserver $etport $rconpass \
+for x in $botlist; do $rconbin --rcon="$etserver $etport $rconpass \
 	resetxp $x"; sleep 1; done  
