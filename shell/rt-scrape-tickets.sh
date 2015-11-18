@@ -2,13 +2,14 @@
 # Tool to query and scrape RT status for use with
 # announcing new, unowned tickets in an IRC channel
 # we use this with the supybot-notify plugin
+# https://git.fedorahosted.org/git/supybot-notify.git
 
 TMPHTML=$(mktemp /tmp/ticketsXXXXXXXX.html)
 TMPFILE=$(mktemp /tmp/ticketsXXXXXXXX)
 TMPFILE2=$(mktemp /tmp/ticketsXXXXXXXX)
 
 function report {
- echo \#example-channel "$1" | nc -w 5 127.0.0.1 5050
+ echo \#example-irchannel "$1" | nc -w 5 127.0.0.1 5050
 }
 
 debug=false
@@ -18,31 +19,30 @@ if [ "$1" = "debug" ]; then
   debug=true
 fi
 
-keytab=/root/example-host01.keytab
-princ=myuser/host01.example.com@EXAMPLE.COM
+keytab=/root/rtuser.keytab
+princ=rtuser/host01.example.com@EXAMPLE.COM
 
 # first get the krb ticket
-kinit -f -k -t myuser.keytab myuser/host01.example.com/@EXAMPLE.COM
+kinit -f -k -t rtuser.keytab rtuser/host01.example.com@EXAMPLE.COM
 
 # now curl and scrape the tickets page
-# your-queue should be your queue
+# replace myqueue-here with your RT queue name
 curl --insecure -s --negotiate -u :  -o -
-'https://engineering.example.com/rt/Search/Results.html?Query=Queue%20%3D%20%27your-queue%27%20AND%20%28Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27stalled%27%20OR%20Status%20%3D%20%27needinfo%27%29' > $TMPHTML
+'https://engineering.example.com/rt/Search/Results.html?Query=Queue%20%3D%20%27myqueue-here%27%20AND%20%28Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27stalled%27%20OR%20Status%20%3D%20%27needinfo%27%29' > $TMPHTML
 elinks -dump-width 1000 -dump 1 $TMPHTML | sed '1,/Gantt Chart/d' | sed '/Time to display:/,$d' > $TMPFILE
 
 # links to the tickets will look like this:
 #   https://engineering.example.com/rt/Ticket/Display.html?id=<ticket #>
 cat $TMPFILE | sed '1,/^$/d' | sed '/^$/,$d' | sed '1,2d' > $TMPFILE2
 
-############
 # example of the above in $TMPFILE2.  Note that the dump-width is intentionally set high to ensure $subject stays on one line.
 # and the lines should always be two per ticket.
 #
 # <--snip-->
-#    [94]278371 [95]Integrate rsyslog's into scalelab logstash instance                                      stalled     openstack-scalelab Nobody                         0
-#               wfoster@example.com                                                                          2 years ago                    6 weeks ago
 #    [98]375788 [99]IP address space for OpenStack Deployment                                                stalled     openstack-scalelab Nobody                         0
-#               user@example.com                                                                             4 weeks ago 5 days ago         5 days ago
+#               rrati@example.com                                                                             4 weeks ago 5 days ago         5 days ago
+#   [106]378022 [107]Re: Reprovisioning/reinstalling on scale lab                                            new         openstack-scalelab wfoster@example.com             0
+#               wizard@example.com                                                                           11 days ago 10 days ago        10 days ago
 # <--snip-->
 ############
 
@@ -113,13 +113,13 @@ fi
 curtime=$(date +%s)
 
 if [ "$owner" = "Nobody" ]; then
-  if [ -f $tdir/$number/nagtime ]; then
-    if [ $(expr $curtime - $(cat $tdir/$number/nagtime)) -gt 21600 ]; then
-      report "Ticket # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
-    fi
-  else
-    report "(RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
+  if [ ! -f $tdir/$number/nagtime ]; then
+    report "(NEW) (RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
     echo $curtime > $tdir/$number/nagtime
+  else
+    if [ $(expr $curtime - $(cat $tdir/$number/nagtime)) -gt 21600 ]; then
+      report "(RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
+    fi
   fi
 fi
 
