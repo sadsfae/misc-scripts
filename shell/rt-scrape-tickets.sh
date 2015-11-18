@@ -8,41 +8,42 @@ TMPHTML=$(mktemp /tmp/ticketsXXXXXXXX.html)
 TMPFILE=$(mktemp /tmp/ticketsXXXXXXXX)
 TMPFILE2=$(mktemp /tmp/ticketsXXXXXXXX)
 
+# set query threshold to 3hrs
+tolerance=10800
+
 function report {
- echo \#example-irchannel "$1" | nc -w 5 127.0.0.1 5050
+ echo \#example-irc-channel "$1" | nc -w 5 127.0.0.1 5050
 }
 
 debug=false
-tdir=/root/oslab-tickets
+tdir=/root/rt-tickets
 
 if [ "$1" = "debug" ]; then
   debug=true
 fi
 
 keytab=/root/rtuser.keytab
-princ=rtuser/host01.example.com@EXAMPLE.COM
+princ=rtuser/host01.example.com@example.COM
 
 # first get the krb ticket
-kinit -f -k -t rtuser.keytab rtuser/host01.example.com@EXAMPLE.COM
+kinit -f -k -t rtuser.keytab rtuser/host01.example.com@example.COM
 
 # now curl and scrape the tickets page
-# replace myqueue-here with your RT queue name
-curl --insecure -s --negotiate -u :  -o -
-'https://engineering.example.com/rt/Search/Results.html?Query=Queue%20%3D%20%27myqueue-here%27%20AND%20%28Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27stalled%27%20OR%20Status%20%3D%20%27needinfo%27%29' > $TMPHTML
+# change 'your-rtqueue' to your RT queue in the URl below
+curl --insecure -s --negotiate -u :  -o - 'https://engineering.example.com/rt/Search/Results.html?Query=Queue%20%3D%20%27your-rtqueue%27%20AND%20%28Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27stalled%27%20OR%20Status%20%3D%20%27needinfo%27%29' > $TMPHTML
 elinks -dump-width 1000 -dump 1 $TMPHTML | sed '1,/Gantt Chart/d' | sed '/Time to display:/,$d' > $TMPFILE
 
 # links to the tickets will look like this:
 #   https://engineering.example.com/rt/Ticket/Display.html?id=<ticket #>
 cat $TMPFILE | sed '1,/^$/d' | sed '/^$/,$d' | sed '1,2d' > $TMPFILE2
 
+############
 # example of the above in $TMPFILE2.  Note that the dump-width is intentionally set high to ensure $subject stays on one line.
 # and the lines should always be two per ticket.
 #
 # <--snip-->
-#    [98]375788 [99]IP address space for OpenStack Deployment                                                stalled     openstack-scalelab Nobody                         0
-#               rrati@example.com                                                                             4 weeks ago 5 days ago         5 days ago
-#   [106]378022 [107]Re: Reprovisioning/reinstalling on scale lab                                            new         openstack-scalelab wfoster@example.com             0
-#               wizard@example.com                                                                           11 days ago 10 days ago        10 days ago
+#    [98]375788 [99]IP address space for OpenStack Deployment   stalled     openstack-scalelab Nobody
+#               wizard@example.com                              4 weeks ago 5 days ago         5 days ago
 # <--snip-->
 ############
 
@@ -115,9 +116,11 @@ curtime=$(date +%s)
 if [ "$owner" = "Nobody" ]; then
   if [ ! -f $tdir/$number/nagtime ]; then
     report "(NEW) (RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
+    echo $curtime > $tdir/$number/nagtime
   else
-    if [ $(expr $curtime - $(cat $tdir/$number/nagtime)) -gt 21600 ]; then
+    if [ $(expr $curtime - $(cat $tdir/$number/nagtime)) -gt $tolerance ]; then
       report "(RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
+      echo $curtime > $tdir/$number/nagtime
     fi
   fi
 fi
