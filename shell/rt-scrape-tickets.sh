@@ -115,7 +115,6 @@ curtime=$(date +%s)
 if [ "$owner" = "Nobody" ]; then
   if [ ! -f $tdir/$number/nagtime ]; then
     report "(NEW) (RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
-    echo $curtime > $tdir/$number/nagtime
   else
     if [ $(expr $curtime - $(cat $tdir/$number/nagtime)) -gt 21600 ]; then
       report "(RT-oslab) $subject,  # $number, owner = Nobody. URL = https://engineering.example.com/rt/Ticket/Display.html?id=$number"
