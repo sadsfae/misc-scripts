@@ -1,57 +1,64 @@
 #!/usr/bin/bash
 # creates a new tenant/user
-# optionally creates a generic network and allows ICMP/SSH
+# optionally creates a generic network, subnet, router and
+# sets up SSH/ICMP security groups, sets default gateway
 # usage :: run from openstack controller
-# usage :: source keystonerc_admin
-# usage :: ./openstack-create-user.sh
+# usage :: source overcloudrc or keystonerc
+# usage :: ./oslab-osp7-create-user.sh
 
-# specify your external admin network below
-EXTERNAL_NET_ID="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+# this should be your Neutron external network
+EXTERNAL_NET_ID="XXXXXXXXXXXXXXX"
+# ip address of your controller
 CONTROLLER_PUB_IP="1.1.1.1"
-USER_PASSWORD="changepassword"
+# generic password for new users
+USER_PASSWORD="XXXXXXXXX"
 USER_DOMAIN="@example.com"
-TOKEN_DIR="/root/keystonerc.d"
-
-if ! [ -d $TOKEN_DIR ]
-then
-	mkdir -p $TOKEN_DIR
-fi
+# where tokens are stored
+token_location="/root/keystonerc.d"
+# where admin-level token is located
+admin_token='/root/keystonerc_admin'
+# random string for tenant network,subnet,router
+# this is so multiple networks created inside same tenant
+# have a unique name
+randstring=`date | md5sum | cut -c1-5`
+# change this to https if you use SSL endpoints
+endpoint_proto='http'
 
 get_id() {
   echo `"$@" | awk '/id / {print $4}'`
 }
 
 create_tenant_user() {
+
 tenant_id=$(get_id keystone tenant-get ${tenant_name})
   if [[ -z $tenant_id ]]
   then
 	tenant_id=$(get_id keystone tenant-create --name=${tenant_name})
   fi
 
-  user_id=$(get_id keystone user-create --name=$user_name --pass=$USER_PASSWORD \
-  --email=${user_name}${USER_DOMAIN} --tenant=$tenant_id)
+  user_id=$(get_id keystone user-create --name=$user_name --pass=$USER_PASSWORD --email=${user_name}${USER_DOMAIN} --tenant=$tenant_id)
   member_id=$(get_id keystone role-get _member_)
   echo keystone user-role-add --tenant-id $tenant_id --user-id $user_id --role-id $member_id
 
-cat > /root/keystonerc.d/keystonerc_${user_name} <<EOF
+cat > $token_location/keystonerc_${user_name} <<EOF
 export OS_TENANT_NAME=$tenant_name
 export OS_USERNAME=$user_name
 export OS_PASSWORD=$USER_PASSWORD
-export OS_AUTH_URL="http://${CONTROLLER_PUB_IP}:5000/v2.0/"
+export OS_AUTH_URL="${endpoint_proto}://${CONTROLLER_PUB_IP}:5000/v2.0/"
 export OS_AUTH_STRATEGY=keystone
 export PS1="[\u@\h \W(keystone_$user_name)]$ "
 EOF
 }
 
 create_tenant_network() {
-  tenant_network_name=default-network-$tenant_name
-  tenant_router_name=default-router-$tenant_name
-  tenant_subnet_name=default-subnet-$tenant_name
+  tenant_network_name=default-network-$tenant_name-$randstring
+  tenant_router_name=default-router-$tenant_name-$randstring
+  tenant_subnet_name=default-subnet-$tenant_name-$randstring
   tenant_subnet_net=192.168.1.0
   tenant_created_id=$(keystone tenant-get $tenant_name | grep id | awk '{print $4}')
 
 # source newly created keystonerc so we create network as that user
-source /root/keystonerc.d/keystonerc_$user_name
+source $token_location/keystonerc_$user_name
 
 # create new network, subnet and router
 neutron net-create $tenant_network_name
@@ -94,7 +101,7 @@ cat <<EndofMessage
 EndofMessage
 
 # source admin token again
-source /root/keystonerc_admin
+source $admin_token
 
 echo -en "Enter Tenant name (defaults to username): "
 read tenant_name
@@ -139,12 +146,12 @@ fi
 
 # summarize what we did
 # source admin again to obtain tenant id
-source /root/keystonerc_admin
+source $admin_token 
 
 cat <<EndofMessage
 
 ####################################
-#         Account Summary          #
+#      OSLab Account Summary       #
 ====================================
 Username:     $user_name
 Tenant:       $tenant_name
