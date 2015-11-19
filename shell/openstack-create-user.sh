@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# creates a new tenant/user
+# creates a new OpenStack tenant/user
 # optionally creates a generic network, subnet, router and
 # sets up SSH/ICMP security groups, sets default gateway
 # usage :: run from openstack controller
@@ -151,7 +151,7 @@ source $admin_token
 cat <<EndofMessage
 
 ####################################
-#      OSLab Account Summary       #
+#    OpenStack Account Summary     #
 ====================================
 Username:     $user_name
 Tenant:       $tenant_name
