@@ -13,6 +13,8 @@ CONTROLLER_PUB_IP="1.1.1.1"
 # generic password for new users
 USER_PASSWORD="XXXXXXXXX"
 USER_DOMAIN="@example.com"
+# network for users internal network
+user_net_cidr='192.168.1.0'
 # where tokens are stored
 token_location="/root/keystonerc.d"
 # where admin-level token is located
@@ -54,7 +56,7 @@ create_tenant_network() {
   tenant_network_name=default-network-$tenant_name-$randstring
   tenant_router_name=default-router-$tenant_name-$randstring
   tenant_subnet_name=default-subnet-$tenant_name-$randstring
-  tenant_subnet_net=192.168.1.0
+  tenant_subnet_net=$user_net_cidr
   tenant_created_id=$(keystone tenant-get $tenant_name | grep id | awk '{print $4}')
 
 # source newly created keystonerc so we create network as that user
