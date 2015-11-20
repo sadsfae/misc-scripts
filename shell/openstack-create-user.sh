@@ -1,19 +1,20 @@
 #!/usr/bin/bash
 # creates a new OpenStack tenant/user
 # optionally creates a generic network, subnet, router and
-# sets up SSH/ICMP security groups, sets default gateway
+# sets the default GW so users can immediately start using things.
+# also sets up security group rules for SSH/ICMP
 # usage :: run from openstack controller
 # usage :: source overcloudrc or keystonerc
-# usage :: ./oslab-osp7-create-user.sh
+# usage :: ./openstack-create-user.sh
 
 # this should be your Neutron external network
-EXTERNAL_NET_ID="XXXXXXXXXXXXXXX"
+EXTERNAL_NET_ID="76c6ce26-d322-4e46-a440-bf4cc415c059"
 # ip address of your controller
 CONTROLLER_PUB_IP="1.1.1.1"
 # generic password for new users
 USER_PASSWORD="XXXXXXXXX"
 USER_DOMAIN="@example.com"
-# network for users internal network
+# users generic internal network
 user_net_cidr='192.168.1.0'
 # where tokens are stored
 token_location="/root/keystonerc.d"
@@ -23,8 +24,10 @@ admin_token='/root/keystonerc_admin'
 # this is so multiple networks created inside same tenant
 # have a unique name
 randstring=`date | md5sum | cut -c1-5`
-# change this to https if you use SSL endpoints
-endpoint_proto='http'
+# change this to https if you're using SSL endpoints
+endpoint_proto='https'
+# nameserver for tenants to use
+dns_nameserver=8.8.8.8
 
 get_id() {
   echo `"$@" | awk '/id / {print $4}'`
@@ -64,7 +67,7 @@ source $token_location/keystonerc_$user_name
 
 # create new network, subnet and router
 neutron net-create $tenant_network_name
-neutron subnet-create $tenant_network_name $tenant_subnet_net/24 --name $tenant_subnet_name
+neutron subnet-create $tenant_network_name $tenant_subnet_net/24 --dns-nameserver $dns_nameserver --name $tenant_subnet_name
 neutron router-create $tenant_router_name
 
 # obtain newly created router, network and subnet id
