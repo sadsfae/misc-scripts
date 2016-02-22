@@ -17,8 +17,8 @@
 # http://dev.etlegacy.com/projects/etlegacy/wiki/Links#section-3
 # 
 # EXAMPLE:
-# http://eu.funcamp.net:9999/et.html
-# http://eu.funcamp.net:9999/et.png
+# http://eu.funcamp.net:9998/et.html
+# http://eu.funcamp.net:9998/et.png
 #
 # For png generation:
 # I use the following .html2psrc
