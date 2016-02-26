@@ -52,7 +52,7 @@ check_nettools
 
 check_br_exist()
 {  # check if there's a bridged interface
-   /sbin/ifconfig -a | grep $bridgename | wc -l
+   /sbin/ifconfig -a | grep $bridgename | egrep -v "virb" | wc -l
 }
 
 create_br_int()
