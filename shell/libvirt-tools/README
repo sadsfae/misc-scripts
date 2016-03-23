@@ -1,0 +1,35 @@
+Step 1
+  Install centos7 (or rhel7) on libvirt locally or on hypervisor
+
+Step 2
+  Save the qcow2 image but delete the VM
+
+Step 3
+  Create a number of VM qcow2 files using the above image as the
+  backing file.  This is how you do this, e.g. suppose you want to 
+  have 3 test VMs:
+
+     cd /var/lib/libvirt/images/
+     cp -p /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
+     rm -f centos7.qcow2 
+     qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-01.qcow2
+     qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-02.qcow2
+     qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
+
+Step 4
+   Create 3 VMs (or as many as you need in your test env) using virt-manager
+   For each, use a pre-existing disk image and use each of the above
+   disk image files.
+
+Step 5
+   Use the reset.sh script (place it in /root/VIRT/ ) to reset
+   your images.  This script calls:  "reset-images.sh" which should
+   also be placed in /root/VIRT/
+
+   Edit the reset-images.sh to match your libvirt network.
+
+
+IMPROVEMENTS:
+   Make the script more generic so that the paths are not hardcoded 
+   to live in /root/VIRT/
+
