@@ -1,3 +1,10 @@
+###########################################################################################
+# This is a set of simple tools which allow you to easily reset VM images for testing
+# In this case we'll use this to easily test Ansible or Puppet changes in a sandbox.
+# Requires: libvirt, qemu-kvm, qemu-img
+# Assumes: An EL-based Hypervisor (Fedora, CentOS, RHEL)
+###########################################################################################
+
 Step 1
   Install centos7 (or rhel7) on libvirt locally or on hypervisor
 
