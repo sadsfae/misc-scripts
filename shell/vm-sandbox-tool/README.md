@@ -14,7 +14,6 @@ a simple tool to easily reset VMs to a vanilla state for testing
     - Substitute default image names below if not using CentOS7
   - Shutdown the VM
   - Delete the VM *(save the image)*
-
   - Rename your saved VM image to ```centos7-base.qcow2```
 ```
 cd /var/lib/libvirt/images/
@@ -34,6 +33,16 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 
 ![virt-manager](/shell/vm-sandbox-tool/image/virt-manager.png?raw=true)
 
+**Clone the Repo**
+  - You only need ```vm-reset.sh``` so simply download it manually
+```
+wget https://raw.githubusercontent.com/sadsfae/misc-scripts/master/shell/vm-sandbox-tool/vm-reset.sh
+```
+  - Alternatively, you can clone the entire misc-scripts repo.
+```
+git clone https://github.com/sadsfae/misc-scripts/
+cd misc-scripts/shell/vm-sandbox-tool/
+```
 **Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
     - e.g. replace host-01 with whatever hostnames you chose if it's different.
