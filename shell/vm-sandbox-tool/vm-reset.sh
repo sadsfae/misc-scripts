@@ -31,6 +31,19 @@
 #
 # This script will reset your guests to a vanilla state.
 #
+
+# check this script for XXXXXXXXXXX (see below)
+if grep -q "ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" $0 ; then
+    echo "You still have not updated this script with a valid ssh key for your guests."
+    echo -n "Do you wish to continue? [y/n]"
+    read answer
+    if [ "$answer" != "y" -a "$answer" != "Y" ]; then
+        echo consider running the following:
+        echo "   sed -i \"s,ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,\$(cat ~/.ssh/id_rsa.pub),g\" $0"
+        exit 0
+    fi
+fi
+
 # determine the prefix for the libvirt network
 net_prefix=$(virsh net-dumpxml default | grep range | awk -F\' '{ print $2 }' | awk -F. '{ print $1"."$2"."$3 }')
 
