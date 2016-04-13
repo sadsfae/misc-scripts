@@ -29,13 +29,14 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 ```
 
 **Build your Test Fleet**
-  - Create 3 VMs (or as many as you need in your test env) using virt-manager
-    For each, use a pre-existing disk image and use each of the above
-    disk image files.
+  - Create 3 VMs (or as many needed in your test environment) via virt-manager
+    - Use the ```import existing disk image``` option for each of the above qcow2 images you just created.
+
+![virt-manager](/shell/vm-sandbox-tool/image/virt-manager.png?raw=true)
 
 **Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
-    - e.g. replace host-01 with whatever you like.
+    - e.g. replace host-01 with whatever hostname you chose if it's different.
 ```
 guests=(
    ["host-01"]="81"
@@ -43,14 +44,13 @@ guests=(
    ["host-03"]="83"
    )
 ```
-  - Add your public SSH key here in ```vm-reset.sh``` replacing the echo ssh-rsa XXX string.
+  - Insert your public SSH key in ```vm-reset.sh``` replacing the MYPUBKEY string.
+    - Substitute the name of your public key below if it's not ```id_rsa.pub```
 ```
-   # ADD YOUR PUB SSH KEY HERE
-   echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   # END SSH PUB KEY
+sed -i "s,ssh-rsa MYPUBKEY,$(cat ~/.ssh/id_rsa.pub),g" ./vm-reset.sh
 ```
 **Usage**
-  - Run ```vm-reset.sh``` as root to reset your environments.
+  - Run ```vm-reset.sh``` as **root** to reset your environments quickly.
 
 **Issues**
   - Occasionally you'll get a VM in a non-bootable state or grub error
