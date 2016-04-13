@@ -32,9 +32,8 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
   - Create 3 VMs (or as many needed in your test environment) via virt-manager
     - Use the ```import existing disk image``` option for each of the above qcow2 images you just created.
 
-![virt-manager](/image/virt-manager.png?raw=true)
-
-![virt-manager](/image/virt-manager2.png?raw=true)
+![virt-manager](/shell/vm-sandbox-tool/image/virt-manager.png?raw=true)
+![virt-manager](/shell/vm-sandbox-tool/image/virt-manager2.png?raw=true)
 
 **Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
