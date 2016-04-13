@@ -33,6 +33,7 @@
 #
 # determine the prefix for the libvirt network
 net_prefix=$(virsh net-dumpxml default | grep range | awk -F\' '{ print $2 }' | awk -F. '{ print $1"."$2"."$3 }')
+
 # this needs to exist in /var/lib/libvirt/images/
 BASE=centos7-base.qcow2
 
@@ -44,6 +45,17 @@ guests=(
    ["host-02"]="82"
    ["host-03"]="83"
    )
+
+if [ ! -f /var/lib/libvirt/images/$BASE ]; then
+    echo "Could not find /var/lib/libvirt/images/$BASE ... aborting."
+    exit 1
+fi
+
+# ensure guestmount exists
+if ! type -p guestmount ; then
+    echo "I think you need to go install some package, citizen. It is left as an exercise for you to figure out what to do."
+    exit 1
+fi
 
 echo "====== ensure in /etc/hosts"
 for host in "${!guests[@]}" ; do
