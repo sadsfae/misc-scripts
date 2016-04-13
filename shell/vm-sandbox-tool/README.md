@@ -12,7 +12,7 @@ a simple tool to easily reset VMs to a vanilla state for testing
 **Instructions**
   - Preparation
     * Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
-      - Substitute default image names below if not using CentOS7
+      * Substitute default image names below if not using CentOS7
     * Shutdown the VM
     * Delete the VM *(save the image)*
 
@@ -23,7 +23,7 @@ cd /var/lib/libvirt/images/
 mv /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
 ```
     * Create a number of VM qcow2 images using the above image as the backing file.
-
+```
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-01.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-02.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
