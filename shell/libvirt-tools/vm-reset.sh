@@ -81,7 +81,9 @@ EOF
    echo SELINUX=permissive > /etc/sysconfig/selinux
    echo SELINUXTYPE=targeted >> /etc/sysconfig/selinux
    mkdir /root/.ssh/
-   echo ssh-rsa
+   # ADD YOUR PUB SSH KEY HERE
+   echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   # END SSH PUB KEY
    chmod 700 /root/.ssh
    chmod 600 /root/.ssh/authorized_keys
 }
