@@ -7,7 +7,7 @@ a simple tool to easily reset VMs to a vanilla state for testing
   - qemu-kvm 
   - qemu-img
   - libguestfs-tools
-  - Assumes an EL-based Hypervisor
+  - An EL-based Hypervisor
 
 **Instructions**
   - Preparation
@@ -50,7 +50,7 @@ guests=(
 sed -i "s,\(.*echo.*\)ssh-rsa MYPUBKEY\(.*authorized_keys$\),\1$(cat ~/.ssh/id_rsa.pub)\2,g" ./vm-reset.sh
 ```
 **Usage**
-  - Run ```vm-reset.sh``` as **root** to reset your environments quickly.
+  - Run ```sudo ./vm-reset.sh``` to reset your environments quickly.
 
 **Issues**
   - Occasionally you'll get a VM in a non-bootable state or grub error
