@@ -38,6 +38,7 @@ BASE=centos7-base.qcow2
 
 declare -A guests
 # The values are the 4th octet for the guests
+# THIS SHOULD BE UPDATED TO MATCH WHAT YOU HAVE
 guests=(
    ["host-01"]="81"
    ["host-02"]="82"
