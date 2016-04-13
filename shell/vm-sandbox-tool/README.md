@@ -9,20 +9,18 @@ a simple tool to easily reset VMs to a vanilla state for testing
   - libguestfs-tools
   - An EL-based Hypervisor
 
-**Instructions**
-  - Preparation
-    * Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
-      * Substitute default image names below if not using CentOS7
-    * Shutdown the VM
-    * Delete the VM *(save the image)*
+**Setup**
+  - Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
+    - Substitute default image names below if not using CentOS7
+  - Shutdown the VM
+  - Delete the VM *(save the image)*
 
-  - Creation
-    * Rename your saved VM image to ```centos7-base.qcow2```
+  - Rename your saved VM image to ```centos7-base.qcow2```
 ```
 cd /var/lib/libvirt/images/
 mv /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
 ```
-    * Create a number of VM qcow2 images using the above image as the backing file.
+  - Create a number of VM qcow2 images using the above image as the backing file.
 
 ```
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-01.qcow2
@@ -30,7 +28,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-02.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 ```
 
-**Build your Test Fleet**
+**Build Test Fleet**
   - Create 3 VMs (or as many needed in your test environment) via virt-manager
     - Use the ```import existing disk image``` option for each of the above qcow2 images you just created.
 
