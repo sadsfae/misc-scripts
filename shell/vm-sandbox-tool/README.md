@@ -11,10 +11,10 @@ a simple tool to easily reset VMs to a vanilla state for testing
 
 **Instructions**
   - Preparation
-    * Install CentOS/RHEL7 on Libvirt locally or on a hypervisor
-    * Save the qcow2 image (this is your gold copy)
-    * Name it ```centos7-base.qcow2```
-    * Delete the VM (saving the image)
+    * Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
+    * Save the qcow2 image *(this is your gold copy)*
+    * Name it ```centos7-base.qcow2``` for example
+    * Delete the VM *(save the image)*
 
   - Creation
     * Create a number of VM qcow2 images using the above image as the backing
