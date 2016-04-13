@@ -12,17 +12,18 @@ a simple tool to easily reset VMs to a vanilla state for testing
 **Instructions**
   - Preparation
     * Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
-    * Save the qcow2 image *(this is your gold copy)*
-    * Name it ```centos7-base.qcow2``` for example
+      - Substitute default image names below if not using CentOS7
+    * Shutdown the VM
     * Delete the VM *(save the image)*
 
   - Creation
-    * Create a number of VM qcow2 images using the above image as the backing
-      file.
+    * Rename your saved VM image to ```centos7-base.qcow2```
 ```
 cd /var/lib/libvirt/images/
-cp -p /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
-rm -f centos7.qcow2 
+mv /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
+```
+    * Create a number of VM qcow2 images using the above image as the backing file.
+
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-01.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-02.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
@@ -36,7 +37,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 
 **Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
-    - e.g. replace host-01 with whatever hostname you chose if it's different.
+    - e.g. replace host-01 with whatever hostnames you chose if it's different.
 ```
 guests=(
    ["host-01"]="81"
