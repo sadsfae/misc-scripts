@@ -4,7 +4,7 @@ a simple tool to easily reset VMs to a vanilla state for testing
 
 **Requirements**
   - libvirt
-  - qemu-kvm 
+  - qemu-kvm
   - qemu-img
   - libguestfs-tools
   - An EL-based Hypervisor
