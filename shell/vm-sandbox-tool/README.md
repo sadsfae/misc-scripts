@@ -35,6 +35,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 
 **Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
+    - e.g. replace host-01 with whatever you like.
 ```
 guests=(
    ["host-01"]="81"
