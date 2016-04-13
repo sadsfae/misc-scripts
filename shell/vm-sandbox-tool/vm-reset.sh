@@ -33,13 +33,13 @@
 #
 
 # check this script for XXXXXXXXXXX (see below)
-if grep -q "MYPUBKEY" $0 ; then
+if egrep -q ".*echo.*ssh-rsa MYPUBKEY.*authorized_keys$" $0 ; then
     echo "You still have not updated this script with a valid ssh key for your guests."
     echo -n "Do you wish to continue? [y/n]"
     read answer
     if [ "$answer" != "y" -a "$answer" != "Y" ]; then
         echo consider running the following:
-        echo "   sed -i \"s,ssh-rsa MYPUBKEY,\$(cat ~/.ssh/id_rsa.pub),g\" $0"
+        echo "   sed -i \"s,\\(.*echo.*\\)ssh-rsa MYPUBKEY\\(.*authorized_keys$\\),\\1\$(cat ~/.ssh/id_rsa.pub)\\2,g\" $0"
         exit 0
     fi
 fi
@@ -108,7 +108,7 @@ EOF
    echo SELINUXTYPE=targeted >> /etc/sysconfig/selinux
    mkdir /root/.ssh/
    # ADD YOUR PUB SSH KEY HERE
-   echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > /root/.ssh/authorized_keys
+   echo ssh-rsa MYPUBKEY > /root/.ssh/authorized_keys
    # END SSH PUB KEY
    chmod 700 /root/.ssh
    chmod 600 /root/.ssh/authorized_keys
@@ -155,7 +155,7 @@ function rebuild {
     chroot $tmpdir /tmp/do_in_chroot.sh $1
 
     # now warn the user if the authorized_keys was not updated ....
-    if grep -q XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $tmpdir/root/.ssh/authorized_keys ; then
+    if grep -q MYPUBKEY $tmpdir/root/.ssh/authorized_keys ; then
         echo "Warning: you did not update this script to include real ssh keys in /root/.ssh/authorized_keys"
         echo "       : see the content_update function and change as needed."
     fi
