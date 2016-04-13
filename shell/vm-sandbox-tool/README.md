@@ -47,7 +47,7 @@ guests=(
   - Insert your public SSH key in ```vm-reset.sh``` replacing the MYPUBKEY string.
     - Substitute the name of your public key below if it's not ```id_rsa.pub```
 ```
-sed -i "s,ssh-rsa MYPUBKEY,$(cat ~/.ssh/id_rsa.pub),g" ./vm-reset.sh
+sed -i "s,\(.*echo.*\)ssh-rsa MYPUBKEY\(.*authorized_keys$\),\1$(cat ~/.ssh/id_rsa.pub)\2,g" ./vm-reset.sh
 ```
 **Usage**
   - Run ```vm-reset.sh``` as **root** to reset your environments quickly.
