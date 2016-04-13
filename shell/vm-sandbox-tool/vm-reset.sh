@@ -83,7 +83,7 @@ EOF
    echo SELINUXTYPE=targeted >> /etc/sysconfig/selinux
    mkdir /root/.ssh/
    # ADD YOUR PUB SSH KEY HERE
-   echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > /root/.ssh/authorized_keys
    # END SSH PUB KEY
    chmod 700 /root/.ssh
    chmod 600 /root/.ssh/authorized_keys
@@ -100,32 +100,43 @@ echo ============================
 }
 
 function rebuild {
+    tmpdir=$(mktemp -d /tmp/guestXXXXXXXX)
+
     rm -f $1.qcow2
     # create the overlay
     qemu-img create -b `pwd`/$BASE -f qcow2 $1.qcow2
 
     # create dir to mount the overlay and update configs
-    mkdir /mnt-tmp
+    if [ ! -d $tmpdir ]; then
+        echo "Something went wrong creating $tmpdir... aborting"
+        exit 1
+    fi
 
     # mount the overlay
-    guestmount -a $1.qcow2 -i --rw /mnt-tmp
+    guestmount -a $1.qcow2 -i --rw $tmpdir
 
-    # create the script in /mnt-tmp/tmp/do_in_chroot.sh
-    do_in_chroot /mnt-tmp
+    # create the script in $tmpdir/tmp/do_in_chroot.sh
+    do_in_chroot $tmpdir
 
     # add all hosts to /etc/hosts in the guest
     for host in "${!guests[@]}" ; do
-        echo "$net_prefix"."${guests["$host"]}" $host >> /mnt-tmp/etc/hosts
+        echo "$net_prefix"."${guests["$host"]}" $host >> $tmpdir/etc/hosts
     done
 
     # store the 4th octet in chroot.  This is a hack
-    echo "${guests["$1"]}" >> /mnt-tmp/tmp/guest_octet
+    echo "${guests["$1"]}" >> $tmpdir/tmp/guest_octet
 
     # now call the generated script in the chroot
-    chroot /mnt-tmp /tmp/do_in_chroot.sh $1
+    chroot $tmpdir /tmp/do_in_chroot.sh $1
 
-    umount /mnt-tmp
-    rmdir /mnt-tmp
+    # now warn the user if the authorized_keys was not updated ....
+    if grep -q XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $tmpdir/root/.ssh/authorized_keys ; then
+        echo "Warning: you did not update this script to include real ssh keys in /root/.ssh/authorized_keys"
+        echo "       : see the content_update function and change as needed."
+    fi
+
+    umount $tmpdir
+    rmdir $tmpdir
 }
 
 cd /var/lib/libvirt/images/
