@@ -2,6 +2,11 @@ vm-sandbox-tool
 ===============
 a simple tool to easily reset VMs to a vanilla state for testing/development
 
+**Features**
+  - use a qcow2 backing file to revert VM's quickly back to a vanilla state
+  - ensure static, interative IP addressing on testing VMs
+  - use libguestfs to inject SSH keys and network/host configuration
+
 **Requirements**
   - libvirt
   - qemu-kvm
