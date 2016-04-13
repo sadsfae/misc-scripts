@@ -1,5 +1,5 @@
-libvirt-tools
-=============
+vm-sandbox-tool
+===============
 a simple tool to easily reset VMs to a vanilla state for testing
 
 **Requirements**
