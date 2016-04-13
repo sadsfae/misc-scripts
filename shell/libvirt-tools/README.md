@@ -13,7 +13,7 @@ a simple tool to easily reset VMs to a vanilla state for testing
   - Preparation
     * Install CentOS/RHEL7 on Libvirt locally or on a hypervisor
     * Save the qcow2 image (this is your gold copy)
-    * Name it centos7-base.qcow2
+    * Name it ```centos7-base.qcow2```
     * Delete the VM (saving the image)
 
   - Creation
@@ -34,7 +34,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
     disk image files.
 
 **Usage**
-  - Edit the guests array inside vm-reset.sh to your liking
+  - Edit the guests array inside ```vm-reset.sh``` to your liking
 ```
 guests=(
    ["host-01"]="81"
@@ -42,13 +42,14 @@ guests=(
    ["host-03"]="83"
    )
 ```
-  - Add your public SSH key here in vm-reset.sh
+  - Add your public SSH key here in ```vm-reset.sh```
 ```
    # ADD YOUR PUB SSH KEY HERE
    echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    # END SSH PUB KEY
 ```
-  - Use the vm-reset.sh script to reset your environments.
+  - Run ```vm-reset.sh``` as root to reset your environments.
+
 
 **Issues**
   - Occasionally you'll get a VM in a non-bootable state or grub error
