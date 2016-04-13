@@ -33,7 +33,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
 
 ![virt-manager](/shell/vm-sandbox-tool/image/virt-manager.png?raw=true)
 
-**Clone the Repo**
+**Download the vm-reset Script**
   - You only need ```vm-reset.sh``` so simply download it manually
 ```
 wget https://raw.githubusercontent.com/sadsfae/misc-scripts/master/shell/vm-sandbox-tool/vm-reset.sh
