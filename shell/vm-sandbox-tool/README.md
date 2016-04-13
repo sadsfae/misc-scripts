@@ -33,7 +33,7 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
     For each, use a pre-existing disk image and use each of the above
     disk image files.
 
-**Usage**
+**Prep the Tool**
   - Edit the guests array inside ```vm-reset.sh``` to your liking
 ```
 guests=(
@@ -48,8 +48,8 @@ guests=(
    echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    # END SSH PUB KEY
 ```
+**Usage**
   - Run ```vm-reset.sh``` as root to reset your environments.
-
 
 **Issues**
   - Occasionally you'll get a VM in a non-bootable state or grub error
