@@ -42,7 +42,7 @@ guests=(
    ["host-03"]="83"
    )
 ```
-  - Add your public SSH key here in ```vm-reset.sh```
+  - Add your public SSH key here in ```vm-reset.sh``` replacing the echo ssh-rsa XXX string.
 ```
    # ADD YOUR PUB SSH KEY HERE
    echo ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
