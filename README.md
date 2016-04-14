@@ -1,7 +1,7 @@
 misc-scripts
 ============
 
-Ops, Automation or Dev Tools organized by language.
+Ops, automation or dev tools organized by language.
 
 **Perl**
   - Random utilities written in Perl
