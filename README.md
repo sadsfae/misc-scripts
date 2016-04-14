@@ -1,6 +1,16 @@
 misc-scripts
 ============
 
-This is a repository containing miscellaneous, unrelated ops, automation or dev tools/scripts.
-It's more of a place for me to store random things and less a treasure-trove
-of supreme utility - some of these will not be very useful to anyone :)
+Unrelated Ops, Automation or Dev Tools/Scripts.
+
+**Perl**
+  - Random utilities written in Perl
+
+**Python**
+  - Random tools written in Python
+  - Test applications for learning Python
+
+**Shell**
+  - Contains most of the utility tools and scripts
+  - Mostly centered around Sysadmin tasks, virtualization, OpenStack
+  - These may be the most useful to others
