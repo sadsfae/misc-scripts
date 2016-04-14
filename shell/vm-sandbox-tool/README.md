@@ -12,6 +12,7 @@ a simple tool to easily reset VMs to a vanilla state for testing/development
   - qemu-kvm
   - qemu-img
   - libguestfs-tools
+  - virt-manager *or* virt-install
   - An EL-based Hypervisor
 
 **Setup**
