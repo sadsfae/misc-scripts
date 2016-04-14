@@ -59,6 +59,7 @@ guests=(
    ["host-03"]="83"
    )
 
+# basic sanity checks
 if [ ! -f /var/lib/libvirt/images/$BASE ]; then
     echo "Could not find /var/lib/libvirt/images/$BASE ... aborting."
     exit 1
@@ -66,7 +67,7 @@ fi
 
 # ensure guestmount exists
 if ! type -p guestmount ; then
-    echo "I think you need to go install some package, citizen. It is left as an exercise for you to figure out what to do."
+    echo "You don't appear to have libguestfs-tools installed, citizen."
     exit 1
 fi
 
