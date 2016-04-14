@@ -69,4 +69,6 @@ sed -i "s,\(.*echo.*\)ssh-rsa MYPUBKEY\(.*authorized_keys$\),\1$(cat ~/.ssh/id_r
 
 **Issues**
   - Occasionally you'll get a VM in a non-bootable state or grub error
-    - **Fix**: just force power off and power on again.
+    - **Fix**: Force power off and power on again.
+  - Sometimes you'll see phantom libguestfs VMs show up.
+    - **Fix**: Power them off and they will dissapear.
