@@ -1,9 +1,7 @@
 #!/bin/bash
 # quickly make a static ethernet interface bridged
 # assumes you are using a static IP address
-# assumes your primary interface is called "eth0"
 # assumes you're running a Red Hat based distribution
-# assumes bridge name will be br0, makes it primary
 # requires net-tools
 
 # set eth device and bridge as input variables
@@ -60,18 +58,21 @@ create_br_int()
    cp /etc/sysconfig/network-scripts/ifcfg-$ethname /etc/sysconfig/network-scripts/ifcfg-$bridgename 
    sed -i 's/IPADDR/#IPADDR/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i 's/NETMASK/#NETMASK/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
+   sed -i 's/GATEWAY/#GATEWAY/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i "s/DEVICE=$ethname/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
    sed -i 's/UUID/#UUID/g' /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/NAME=$ethname/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/TYPE=Ethernet/TYPE=bridge/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   sed -i "s/NAME=$ethname/NAME=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   sed -i "s/TYPE=Ethernet/TYPE=Bridge/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   echo "BRIDGE=$bridgename" >> /etc/sysconfig/network-scripts/ifcfg-$ethname
    echo "Restarting Network with new Bridge"
    /sbin/service network restart >/dev/null 2>&1
    echo "External Bridge: $bridgename created"
+   /sbin/ifup $bridgename
    /sbin/ifconfig $bridgename
    echo "Note:: If you see issues with routing you may need to reboot"
 }
 
-# create br0 if it doesn't exist
+# create bridge if it doesn't exist
 br_exist=$(check_br_exist)
 
 case $br_exist in
