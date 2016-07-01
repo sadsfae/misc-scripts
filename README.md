@@ -12,5 +12,5 @@ Ops, automation or dev tools organized by language.
 
 **Shell**
   - Contains most of the utility tools and scripts
-  - Mostly centered around Sysadmin tasks, virtualization, OpenStack
+  - Mostly centered around Sysadmin tasks, virtualization, and OpenStack
   - These may be the most useful to others
