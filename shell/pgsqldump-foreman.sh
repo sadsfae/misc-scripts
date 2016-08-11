@@ -21,14 +21,14 @@ fi
 
 # backup databases, gzip and log
 if [ -d $dump_dest ]; then
-   echo "(`date`) pgsqldump-foreman: backup starting: pgsqldump-foreman-${dump_date}.gz" >> $backuplog
-   $pgsqluser_prefix $pgsqldump | /usr/bin/gzip - > $dump_dest/pgsqldump-foreman-${dump_date}.gz;
-   echo "(`date`) pgsqldump-foreman: backup complete: pgsqldump-foreman-${dump_date}.gz" >> $backuplog
+    echo "(`date`) pgsqldump-foreman: backup starting: pgsqldump-foreman-${dump_date}.gz" >> $backuplog
+    $pgsqluser_prefix $pgsqldump | /usr/bin/gzip - > $dump_dest/pgsqldump-foreman-${dump_date}.gz;
+    echo "(`date`) pgsqldump-foreman: backup complete: pgsqldump-foreman-${dump_date}.gz" >> $backuplog
 fi
 
 # remove archives older than 120 days
 echo "(`date`) pgsqldump-foreman: removing archives older than 120 days:" >> $backuplog
 for x in $expired_archives;
-   do printf "(`date`) pgsqldump-foreman: [removing] $x\n" >> $backuplog;
+    do printf "(`date`) pgsqldump-foreman: [removing] $x\n" >> $backuplog;
    $rmexpired_archives;
 done
