@@ -16,7 +16,7 @@ rmexpired_archives=`find $dump_dest -type f -ctime +120 -exec rm -rf {} \;`
 # check if dumpdir exists
 if ! [ -d $dump_dest ]; then
     mkdir $dump_dest
-	echo "creating backup destination"
+    echo "creating backup destination"
 fi
 
 # backup databases, gzip and log
