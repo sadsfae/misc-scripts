@@ -8,9 +8,12 @@ I use this with a [remote git
 repo](https://hobo.house/2016/06/13/secure-distributed-password-resources-with-gpg-git-and-vim/)
 and a git post-receive hook like the following to keep the excuses up to date.
 
+There is a [full guide](https://hobo.house/2016/10/04/fun-and-automation-with-git-hooks/) on setting this up.
+
+Here's the git post-receive hook:
+
 ```
 #!/bin/bash
 echo "adding your sweet excuses.."
-git --work-tree=/home/repouser/public_html/ --git-dir=/home/repouser/excuses
-checkout -f
+git --work-tree=/home/repouser/public_html/ --git-dir=/home/repouser/excuses checkout -f
 ```
