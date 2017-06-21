@@ -3,7 +3,7 @@
 # and you can ping your imap server successfully.
 
 imapserver=$(cat ~/.offlineimaprc | grep remotehost | awk '{print $3}')
-imapactive=`ps -ef | grep offlineimap | grep -v grep | wc -l`
+imapactive=$(ps -ef | grep '[o]fflineimap' | wc -l)
 netactive=$(ping -c3 $imapserver >/dev/null 2>&1 && echo up || echo down)
 mailsync="/usr/bin/offlineimap -u quiet -q"
 
