@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import sys
 import requests
@@ -27,7 +28,7 @@ def getdkp():
         player_name = str(request_json["text"])
         os.system("/bin/echo " + "data = " + str(request_data))
         os.system("/bin/echo " + "json = " + str(request_json))
-        playerproc = subprocess.Popen(["sh","./report-dkp-webhook.sh", player_name],
+        playerproc = subprocess.Popen(["sh","./report-dkp.sh", player_name],
                                       stdout=subprocess.PIPE)
         playerout = playerproc.stdout.read()
         response = app.response_class(response=str(playerout), status=200,
@@ -46,7 +47,6 @@ def root():
 
 # Python wsgi server options
 if __name__ == "__main__":
-    USERNAME = os.environ.get('USERNAME', USERNAME)
     port = int(os.environ.get('MATTERMOST_DKP_PORT', 8089))
     # use 0.0.0.0 if it shall be accessible from outside of host
     app.run(host='127.0.0.1', port=port)
