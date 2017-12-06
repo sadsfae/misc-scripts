@@ -29,4 +29,4 @@
 
 ### Action Pic
 
-![getdkp](/image/getdkp.png?raw=true)
+![getdkp](/python/mattermost-eqdkp/image/getdkp.png?raw=true)
