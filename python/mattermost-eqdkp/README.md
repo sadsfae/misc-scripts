@@ -1,3 +1,5 @@
+# This has been [moved here](https://github.com/sadsfae/mattermost-eqdkp)
+
 ## Flask Mattermost API for an EQDKP2 Webhook
 
 * ```mattermost-dkpbot.py``` Flask app that runs an simple API to query with a
