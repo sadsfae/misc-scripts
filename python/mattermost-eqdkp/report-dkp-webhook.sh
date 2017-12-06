@@ -4,6 +4,7 @@
 args=$1
 player_name=$(echo $args | awk '{ print $2 }')
 dkp_url="https://example.com/eqdkp/index.php/Points/"
+botname="dkpbot"
 
 # minimal sanitization of input
 # print usage if not specified
@@ -23,5 +24,5 @@ function gather_dkp_value {
 playerdkp=$(gather_dkp_value)
 
 cat <<EOF
-{"response_type": "ephemeral", "text": "$(echo $playerdkp)"}
+{"response_type": "ephemeral", "username": "$botname", "text": "$(echo $playerdkp)"}
 EOF
