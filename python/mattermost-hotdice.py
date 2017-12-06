@@ -15,6 +15,8 @@ from flask import jsonify
 
 app = Flask(__name__)
 
+USERNAME="vegas"
+
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
 def is_int(s):
