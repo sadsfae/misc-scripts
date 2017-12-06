@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import sys
 import requests
 import json
 import subprocess
@@ -26,8 +25,7 @@ def getdkp():
         request_data = request.args.get('text')
         request_json = request.get_json(force=True)
         player_name = str(request_json["text"])
-        os.system("/bin/echo " + "data = " + str(request_data))
-        os.system("/bin/echo " + "json = " + str(request_json))
+        # eqdkp2 scraper, player_name is sent as an arg to webhook command
         playerproc = subprocess.Popen(["sh","./report-dkp.sh", player_name],
                                       stdout=subprocess.PIPE)
         playerout = playerproc.stdout.read()
@@ -42,7 +40,6 @@ def root():
     """
     Home handler
     """
-
     return "OK"
 
 # Python wsgi server options
