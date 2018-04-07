@@ -2,7 +2,7 @@
 # simple script to scrape DKP site and report value
 # usage: sh report_dkp PLAYERNAME
 player_name=$1
-dkp_url="https://divinitas.tk/eqdkp/index.php/Points/"
+dkp_url="https://example.com/eqdkp/index.php/Points/"
 
 # minimal sanitization of input
 # print usage if not specified
