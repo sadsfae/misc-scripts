@@ -1,0 +1,10 @@
+## rcon.c is a binary which communicates with the Enemy Territory server
+## and run commands remotely against it, using simple password auth.
+
+## First compile rcon.c
+
+gcc -o rcon rcon.c
+
+## Now you can use it to run commands remotely against an Enemy Territory server
+
+./rcon --rcon="192.168.0.44 27962 YOURPASSWORDHERE resetxp [BOT]Dane"
