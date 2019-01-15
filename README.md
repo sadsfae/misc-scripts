@@ -14,3 +14,9 @@ Ops, automation or dev tools organized by language.
   - Contains most of the utility tools and scripts
   - Mostly centered around Sysadmin tasks, virtualization, and OpenStack
   - These may be the most useful to others
+
+**lua**
+  - Random stuff written in lua
+
+**C**
+  - Random stuff written in C.
