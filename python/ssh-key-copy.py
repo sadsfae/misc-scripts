@@ -5,6 +5,7 @@
 # you should use the Ansible authorized_key module if you want
 # to truly manage your keys properly however:
 # http://docs.ansible.com/ansible/authorized_key_module.html#examples
+# https://github.com/sadsfae/ansible-sshkeys
 
 import os
 
