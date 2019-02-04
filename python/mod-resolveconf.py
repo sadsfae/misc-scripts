@@ -3,16 +3,28 @@
 # takes one argument, "localhost" or "system"
 # mod-resolveconf.py localhost (point everything to localhost)
 # mod-resolvconf.py system (revert everything to what DHCP or other sets)
-# this is useful for running pi-hole as a local container for your DNS
+# this can useful for running pi-hole as a local container for your DNS
 # https://hobo.house/2018/02/27/block-advertising-with-pi-hole-and-raspberry-pi/
 
 import sys
 import shutil
+import subprocess
 
 if len(sys.argv[1:]) != 1:
     print ("## Requires 1 argument ##")
     print ("mod-resolveconf.py localhost|system")
     exit(1)
+
+# if you choose localhost, check DNS is working first
+if sys.argv[1] == "localhost":
+    dns_command = 'dig @localhost hobo.house'
+    try:
+        subprocess.check_output(dns_command, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        ret = e.returncode
+        if ret != 0:
+            print("Cannot do DNS lookups against your localhost pi-hole, quitting.")
+            exit(1)
 
 # backup /etc/resolv.conf then set it to 'localhost'
 def main():
