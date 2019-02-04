@@ -14,13 +14,10 @@ if len(sys.argv[1:]) != 1:
     print ("mod-resolveconf.py localhost|system")
     exit(1)
 
-# backup existing /etc/resolv.conf
-if sys.argv[1] == "localhost":
-    shutil.copy2('/etc/resolv.conf', '/tmp/resolv.conf.system')
-
-# set dns to localhost, or try and revert if backup is present
+# backup /etc/resolv.conf then set it to 'localhost'
 def main():
     if sys.argv[1] == "localhost":
+        shutil.copy2('/etc/resolv.conf', '/tmp/resolv.conf.system')
         dns = 'nameserver localhost\n'
         resolvconf = '/etc/resolv.conf'
         editconflocal = open(resolvconf, 'w')
@@ -31,11 +28,12 @@ def main():
         with open(resolvconf, 'r') as result:
             shutil.copyfileobj(result, sys.stdout)
 
+# revert /etc/resolv.conf from backup if it exists
     if sys.argv[1] == "system":
         try:
             resolvconf = '/etc/resolv.conf'
             shutil.copy2('/tmp/resolv.conf.system', '/etc/resolv.conf')
-            print ("Reverting %s back /tmp/resolv.conf.system ..." % resolvconf)
+            print ("Reverting %s back to /tmp/resolv.conf.system ..." % resolvconf)
             print ("-----------------")
             with open(resolvconf, 'r') as result:
                 shutil.copyfileobj(result, sys.stdout)
