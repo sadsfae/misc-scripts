@@ -20,3 +20,6 @@ Ops, automation or dev tools organized by language.
 
 **C**
   - Random stuff written in C.
+
+**groovy**
+  - Mostly Jenkins pipelines written in groovy
