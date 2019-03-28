@@ -3,8 +3,6 @@
 # takes one argument, "localhost" or "system"
 # mod-resolveconf.py cloudflare (point everything to cloudflare public DNS)
 # mod-resolvconf.py system (revert everything to what DHCP or other sets)
-# this can useful for running pi-hole as a local container for your DNS
-# https://hobo.house/2018/02/27/block-advertising-with-pi-hole-and-raspberry-pi/
 
 import sys
 import shutil
@@ -12,7 +10,7 @@ import subprocess
 
 if len(sys.argv[1:]) != 1:
     print ("## Requires 1 argument ##")
-    print ("mod-resolveconf.py localhost|system")
+    print ("mod-resolveconf.py cloudflare|system")
     exit(1)
 
 # if you choose localhost, check DNS is working first
