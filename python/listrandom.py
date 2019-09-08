@@ -4,13 +4,24 @@
 
 import os
 import random
+import subprocess
 
 banner = "===================="
 print(banner)
-print("Welcome to File Picker 3000\n")
-fileloc = str(input("Type location to pick random files\n"))
-filecount = int(input("How many random picks do you want?\n"))
+print("Welcome to File Picker 3000\n\n")
+fileloc = str(input("Type location to pick random files\n\n"))
+filecount = int(input("How many random picks do you want?\n\n"))
 print(banner)
+
+if filecount >= 1000:
+    print("Come on dude chill, pick less than 1000 results")
+    exit(1)
+
+if fileloc == "~":
+    myuser = subprocess.check_output("whoami", shell=True, stderr=subprocess.STDOUT)
+    myuser = myuser.decode('ascii')
+    myuser = myuser.strip('\n')
+    fileloc = "/home/" + myuser
 
 def picker(n):
     wordguy = os.listdir(fileloc)
