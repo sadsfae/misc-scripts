@@ -28,7 +28,7 @@ if len(sys.argv) <= 1:
 def diceroll(startrange, endrange):
     rollrange = random.randint(int(startrange), int(endrange))
     rollresult = ("A magic die has been rolled between {} and {},"
-                  "you rolled {} " .format(startrange, endrange, rollrange))
+                  " you rolled {} " .format(startrange, endrange, rollrange))
     print(rollresult)
 
 
