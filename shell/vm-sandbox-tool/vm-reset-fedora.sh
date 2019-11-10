@@ -32,10 +32,9 @@
 # This script will reset your guests to a vanilla state.
 #
 
-# check this script for XXXXXXXXXXX (see below)
-
 qemu_img_path="/var/lib/libvirt/images"
 
+# check this script for XXXXXXXXXXX (see below)
 if egrep -q ".*echo.*ssh-rsa MYPUBKEY.*authorized_keys$" $0 ; then
     echo "You still have not updated this script with a valid ssh key for your guests."
     echo -n "Do you wish to continue? [y/n]"
@@ -51,20 +50,21 @@ fi
 net_prefix=$(virsh net-dumpxml default | grep range | awk -F\' '{ print $2 }' | awk -F. '{ print $1"."$2"."$3 }')
 
 # this needs to exist in /var/lib/libvirt/images/
-BASE=centos7-base.qcow2
+BASE=fedora-base.qcow2
 
 declare -A guests
 # The values are the 4th octet for the guests
 # THIS SHOULD BE UPDATED TO MATCH WHAT YOU HAVE
 guests=(
-   ["host-01"]="81"
-   ["host-02"]="82"
-   ["host-03"]="83"
+#   ["host-01"]="81"
+#   ["host-02"]="82"
+#   ["host-03"]="83"
+   ["host-04"]="84"
    )
 
 # basic sanity checks
 if [ ! -f $qemu_img_path/$BASE ]; then
-    echo "Could not find $qemu_img_path/$BASE ... aborting."
+    echo "Could not find $BASE ... aborting."
     exit 1
 fi
 
@@ -94,13 +94,13 @@ function content_update {
     octet=\$(cat /tmp/guest_octet)
     myip=${net_prefix}.\$octet
 
-    cat > /etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF
-DEVICE="eth0"
+    cat > /etc/sysconfig/network-scripts/ifcfg-enp1s0 <<EOF
+DEVICE="enp1s0"
 BOOTPROTO="static"
 ONBOOT="yes"
 TYPE="Ethernet"
-NAME="eth0"
-DEVICE="eth0"
+NAME="enp1s0"
+DEVICE="enp1s0"
 IPADDR="\$myip"
 NETMASK="255.255.255.0"
 GATEWAY="${net_prefix}.1"
