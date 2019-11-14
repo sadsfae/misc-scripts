@@ -94,13 +94,13 @@ function content_update {
     octet=\$(cat /tmp/guest_octet)
     myip=${net_prefix}.\$octet
 
-    cat > /etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF
-DEVICE="eth0"
+    cat > /etc/sysconfig/network-scripts/ifcfg-ens3 <<EOF
+DEVICE="ens3"
 BOOTPROTO="static"
 ONBOOT="yes"
 TYPE="Ethernet"
-NAME="eth0"
-DEVICE="eth0"
+NAME="ens3"
+DEVICE="ens3"
 IPADDR="\$myip"
 NETMASK="255.255.255.0"
 GATEWAY="${net_prefix}.1"
