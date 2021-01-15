@@ -2,7 +2,7 @@
 # quickly make a static ethernet interface bridged
 # assumes you are using a static IP address
 # assumes you're running a Red Hat based distribution
-# requires net-tools
+# requires net-tools and NetworkManager disabled.
 
 # set eth device and bridge as input variables
 ethname=$1
@@ -10,7 +10,7 @@ bridgename=$2
 
 # print usage if not specified
 if [[ $# -eq 0 ]]; then
-        echo "USAGE:   ./eth-bridge-create.sh \$ETHDEVICE \$BRIDGENAME"
+    echo "USAGE:   ./eth-bridge-create.sh \$ETHDEVICE \$BRIDGENAME"
 	echo "EXAMPLE: ./eth-bridge-create.sh eth0 br0"
 	echo "                                      "
 	exit 1
@@ -22,15 +22,23 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# check if NetworkManager is running/enabled
+nm_on=`systemctl status NetworkManager | grep running | wc -l`
+
+if [[ $nm_on -eq 1 ]]; then
+    echo "NetworkManager is Running, please stop/disable it"
+    exit 1
+fi
+
 # check if IP address is static
 static=`cat /etc/sysconfig/network-scripts/ifcfg-$ethname | grep \
 	-i static | wc -l`
 if [[ $static -eq 1 ]]; then
 	echo "Static IP addressing detected, proceeding.."
 	else
-		echo "No Static IP address detected, quitting!"
-	        exit 1
-	fi
+    echo "No Static IP address detected, quitting!"
+	exit 1
+fi
 
 # check that we have the right tools installed first.
 nettoolsinstalled=`rpm -qa | grep net-tools |wc -l`
@@ -41,8 +49,8 @@ check_nettools() {
 		echo "net-tools not installed.. installing"
 		yum install net-tools -y >/dev/null 2>&1
         else
-                echo "[OK]"
-        fi
+        echo "[OK]"
+    fi
 }
 
 # check net-tools package installed first
@@ -55,7 +63,7 @@ check_br_exist()
 
 create_br_int()
 {  # bring up bridged interface, make primary
-   cp /etc/sysconfig/network-scripts/ifcfg-$ethname /etc/sysconfig/network-scripts/ifcfg-$bridgename 
+   cp /etc/sysconfig/network-scripts/ifcfg-$ethname /etc/sysconfig/network-scripts/ifcfg-$bridgename
    sed -i 's/IPADDR/#IPADDR/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i 's/NETMASK/#NETMASK/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i 's/GATEWAY/#GATEWAY/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
