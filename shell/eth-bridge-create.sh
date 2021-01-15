@@ -2,7 +2,7 @@
 # quickly make a static ethernet interface bridged
 # assumes you are using a static IP address
 # assumes you're running a Red Hat based distribution
-# requires net-tools and NetworkManager disabled.
+# requires net-tools, bridge-utils and NM disabled.
 
 # set eth device and bridge as input variables
 ethname=$1
@@ -42,8 +42,9 @@ fi
 
 # check that we have the right tools installed first.
 nettoolsinstalled=`rpm -qa | grep net-tools |wc -l`
+bridgeutilsinstalled=`rpm -qa | grep bridge-utils | wc -l`
 check_nettools() {
-	echo "checking package dependencies.."
+	echo "checking for net-tools.."
 	if [[ $nettoolsinstalled = '0' ]]
 	then
 		echo "net-tools not installed.. installing"
@@ -53,8 +54,19 @@ check_nettools() {
     fi
 }
 
-# check net-tools package installed first
+check_bridgeutils() {
+	echo "checking for bridge-utils.."
+	if [[ $bridgeutilsinstalled = '0' ]]
+	then
+		echo "bridge-utils not installed.. installing"
+		yum install bridge-utils -y >/dev/null 2>&1
+        else
+        echo "[OK]"
+    fi
+}
+# check net-tools and bridge-utils first
 check_nettools
+check_bridgeutils
 
 check_br_exist()
 {  # check if there's a bridged interface
@@ -68,9 +80,12 @@ create_br_int()
    sed -i 's/NETMASK/#NETMASK/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i 's/GATEWAY/#GATEWAY/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
    sed -i "s/DEVICE=$ethname/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   sed -i "s/DEVICE=.*$/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
    sed -i 's/UUID/#UUID/g' /etc/sysconfig/network-scripts/ifcfg-$bridgename
    sed -i "s/NAME=$ethname/NAME=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   sed -i "s/NAME=.*$/NAME=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
    sed -i "s/TYPE=Ethernet/TYPE=Bridge/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
+   sed -i 's/TYPE="Ethernet"/TYPE=Bridge/g' /etc/sysconfig/network-scripts/ifcfg-$bridgename
    echo "BRIDGE=$bridgename" >> /etc/sysconfig/network-scripts/ifcfg-$ethname
    echo "Restarting Network with new Bridge"
    /sbin/service network restart >/dev/null 2>&1
