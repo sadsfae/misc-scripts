@@ -1,8 +1,10 @@
 #!/bin/bash
-# quickly make a static ethernet interface bridged
-# assumes you are using a static IP address
+# Simple tool to create a bridged interface on a host.
 # assumes you're running a Red Hat based distribution
-# requires net-tools, bridge-utils and NM disabled.
+# requires net-tools, bridge-utils
+# Warning: this relies on the legacy 'network'
+# service, if you are using NetworkManager it will be
+# stopped and disabled.
 
 # set eth device and bridge as input variables
 ethname=$1
@@ -26,8 +28,28 @@ fi
 nm_on=`systemctl status NetworkManager | grep running | wc -l`
 
 if [[ $nm_on -eq 1 ]]; then
-    echo "NetworkManager is Running, please stop/disable it"
-    exit 1
+    # gather and print some interface info.
+nmcli_active_con=`/usr/bin/nmcli con show | egrep "ethernet" | awk '{print $1}'`
+nmcli_ip_addr=`nmcli con show $nmcli_active_con | grep "ipv4.addresses"| awk '{print $2}'`
+nmcli_gateway=`nmcli con show $nmcli_active_con | grep "ipv4.gateway" | awk '{print $2}'`
+nmcli_dns1=`cat /etc/resolv.conf | grep nameserver | head -n1 | awk '{print $2}'`
+
+    echo "Your current NetworkManager connection: $nmcli_active_con"
+    echo "Your current IP address: $nmcli_ip_addr"
+    echo "Your current Gatway: $nmcli_gateway"
+    echo "Your DNS server:  $nmcli_dns1"
+    echo "Using nmcli to set a static IP address..."
+    # use NetworkManager to create our static IP config
+    /usr/bin/nmcli con mod $nmcli_active_con ipv4.method manual
+    /usr/bin/nmcli con mod $nmcli_active_con ipv4.addresses $nmcli_ip_addr
+    /usr/bin/nmcli con mod $nmcli_active_con ipv4.gateway $nmcli_gateway
+    /usr/bin/nmcli con mod $nmcli_active_con ipv4.dns $nmcli_dns1
+    /usr/bin/nmcli con mod $nmcli_active_con connection.autoconnect yes
+    /usr/bin/nmcli con up $nmcli_active_con
+    sed -i 's/BOOTPROTO=.*$/BOOTPROTO=static/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
+    echo "Disabling NetworkManager for ifcfg-$ethname script"
+    /usr/bin/systemctl stop NetworkManager >/dev/null 2>&1
+    /usr/bin/systemctl disable NetworkManager >/dev/null 2>&1
 fi
 
 # check if IP address is static
@@ -89,8 +111,8 @@ create_br_int()
    echo "BRIDGE=$bridgename" >> /etc/sysconfig/network-scripts/ifcfg-$ethname
    echo "Restarting Network with new Bridge"
    /sbin/service network restart >/dev/null 2>&1
+   /usr/bin/systemctl enable network  >/dev/null 2>&1
    echo "External Bridge: $bridgename created"
-   /sbin/ifup $bridgename
    /sbin/ifconfig $bridgename
    echo "Note:: If you see issues with routing you may need to reboot"
 }
