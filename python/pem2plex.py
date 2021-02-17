@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # original credit to @lokulin
+#
+# Python 3 compatible
+#
 
 import sys
 import hashlib
@@ -7,11 +10,11 @@ from OpenSSL.crypto import *
 
 def main():
   if(len(sys.argv) != 4):
-    print sys.argv[0] + " /path/to/ssl.crt /path/to/ssl.key ProcessedMachineIdentifier"
+    print(sys.argv[0] + " /path/to/ssl.crt /path/to/ssl.key ProcessedMachineIdentifier")
     sys.exit(0)
   hash = hashlib.sha512()
-  hash.update('plex')
-  hash.update(sys.argv[3])
+  hash.update('plex'.encode('utf-8'))
+  hash.update(sys.argv[3].encode('utf-8'))
   passphrase = hash.hexdigest()
 
   with open(sys.argv[1], 'rb') as f:
@@ -25,9 +28,9 @@ def main():
   p12 = PKCS12()
   p12.set_certificate(cert)
   p12.set_privatekey(key)
-  open("certificate.p12", 'w' ).write( p12.export(passphrase) )
+  open("certificate.p12", 'wb' ).write( p12.export(str.encode(passphrase)) )
 
-  print passphrase
+  print(passphrase)
 
 if __name__ == '__main__':
   main()
