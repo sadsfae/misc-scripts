@@ -16,21 +16,27 @@ a simple tool to easily reset VMs to a vanilla state for testing/development
   - An EL-based Hypervisor
 
 **Setup**
-  - Install a CentOS/RHEL7/Fedora VM locally or on a Libvirt hypervisor
+  - Install a CentOS/RHEL7/8/Fedora VM locally or on a Libvirt hypervisor
     - Substitute default image names below if not using CentOS7
   - Shutdown the VM
   - Delete the VM *(save the image)*
-  - Rename your saved VM image to ```centos7-base.qcow2```
+  - Rename your saved VM image to `centos7-base.qcow2` for EL7
+  - Rename your saved VM image to `centos8-base.qcow2` for EL8
+  - Rename your saved VM image to `fedora-base.qcow2` for Fedora
 ```
 cd /var/lib/libvirt/images/
 mv /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qcow2
+mv /var/lib/libvirt/images/centos8.qcow2 /var/lib/libvirt/images/centos8-base.qcow2
+mv /var/lib/libirt/images/fedora.qcow2 /var/lib/libvirt/images/fedora-base.qcow2
 ```
   - Create a number of VM qcow2 images using the above image as the backing file.
+  - I like to test across a few different EL-based distribution versions.
 
 ```
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-01.qcow2
 qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-02.qcow2
-qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-03.qcow2
+qemu-img create -b `pwd`/centos8-base.qcow2 -f qcow2 -F qcow2 host-03.qcow2
+qemu-img create -b `pwd`/fedora-base.qcow2 -f qcow2 -F qcow2 host-04.qcow2
 ```
 
 **Build Test Fleet**
@@ -41,6 +47,13 @@ qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-03.qcow2
 
 **Download the vm-reset Script**
   - You only need ```vm-reset.sh``` so simply download it manually
+  - I have versions for EL7, EL8, Fedora for convenience, the only diffence is the base image name being called and IP allocation scheme.
+  - Example:
+```
+192.168.122.81 = host-01 (EL7)
+192.168.122.82 = host-02 (EL7)
+192.168.122.83 = host-03 (EL8)
+192.168.122.84 = host-04 (Fedora)
 ```
 wget https://raw.githubusercontent.com/sadsfae/misc-scripts/master/shell/vm-sandbox-tool/vm-reset.sh
 ```
@@ -57,6 +70,7 @@ guests=(
    ["host-01"]="81"
    ["host-02"]="82"
    ["host-03"]="83"
+   ["host-04"]="84"
    )
 ```
   - Insert your public SSH key in ```vm-reset.sh``` replacing the MYPUBKEY string.

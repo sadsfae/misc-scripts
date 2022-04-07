@@ -2,7 +2,7 @@
 # NOTE!!!!
 # this script should be run via sudo
 #
-# 1) Before starting, build a centos7 VM or download a cloud image for centos7
+# 1) Before starting, build a centos8 VM or download a cloud image for centos8
 #    and then save the base qcow2 file.  See BASE below.
 #
 # 2) Using virt-manager define a number of VMs (e.g. 3 VMs if that's what you
@@ -51,15 +51,15 @@ fi
 net_prefix=$(virsh net-dumpxml default | grep range | awk -F\' '{ print $2 }' | awk -F. '{ print $1"."$2"."$3 }')
 
 # this needs to exist in /var/lib/libvirt/images/
-BASE=centos7-base.qcow2
+BASE=centos8-base.qcow2
 
 declare -A guests
 # The values are the 4th octet for the guests
 # THIS SHOULD BE UPDATED TO MATCH WHAT YOU HAVE
 guests=(
-   ["host-01"]="81"
-   ["host-02"]="82"
-   #["host-03"]="83"
+   #["host-01"]="81"
+   #["host-02"]="82"
+   ["host-03"]="83"
    #["host-04"]="84"
    )
 
