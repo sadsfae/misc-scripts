@@ -133,7 +133,7 @@ function rebuild {
 
     rm -f $1.qcow2
     # create the overlay
-    qemu-img create -b `pwd`/$BASE -f qcow2 $1.qcow2
+    qemu-img create -b `pwd`/$BASE -f qcow2 -F qcow2 $1.qcow2
 
     # create dir to mount the overlay and update configs
     if [ ! -d $tmpdir ]; then

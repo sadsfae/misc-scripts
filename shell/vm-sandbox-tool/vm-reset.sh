@@ -60,6 +60,7 @@ guests=(
    ["host-01"]="81"
    ["host-02"]="82"
    ["host-03"]="83"
+   #["host-04"]="84"
    )
 
 # basic sanity checks
@@ -133,7 +134,7 @@ function rebuild {
 
     rm -f $1.qcow2
     # create the overlay
-    qemu-img create -b `pwd`/$BASE -f qcow2 $1.qcow2
+    qemu-img create -b `pwd`/$BASE -f qcow2 -F qcow2 $1.qcow2
 
     # create dir to mount the overlay and update configs
     if [ ! -d $tmpdir ]; then

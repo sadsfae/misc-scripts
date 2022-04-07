@@ -28,9 +28,9 @@ mv /var/lib/libvirt/images/centos7.qcow2 /var/lib/libvirt/images/centos7-base.qc
   - Create a number of VM qcow2 images using the above image as the backing file.
 
 ```
-qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-01.qcow2
-qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-02.qcow2
-qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 host-03.qcow2
+qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-01.qcow2
+qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-02.qcow2
+qemu-img create -b `pwd`/centos7-base.qcow2 -f qcow2 -F qcow2 host-03.qcow2
 ```
 
 **Build Test Fleet**
