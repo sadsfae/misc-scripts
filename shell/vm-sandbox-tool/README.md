@@ -55,6 +55,8 @@ qemu-img create -b `pwd`/fedora-base.qcow2 -f qcow2 -F qcow2 host-04.qcow2
 192.168.122.83 = host-03 (EL8)
 192.168.122.84 = host-04 (Fedora)
 ```
+
+```
 wget https://raw.githubusercontent.com/sadsfae/misc-scripts/master/shell/vm-sandbox-tool/vm-reset.sh
 ```
   - Alternatively, you can clone the entire misc-scripts repo.
