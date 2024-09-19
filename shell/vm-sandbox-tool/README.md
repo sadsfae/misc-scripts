@@ -84,6 +84,11 @@ sed -i "s,\(.*echo.*\)ssh-rsa MYPUBKEY\(.*authorized_keys$\),\1$(cat ~/.ssh/id_r
   - Run ```sudo ./vm-reset.sh``` to reset your environments quickly.
 
 **Issues**
+  - Very modern EL or Fedora may ignore the legacy network-scripts, in this case just make an `/etc/hosts` entry once you figure out what IP address your Libvirt dnsmasq gives you and leave the one it thinks you should have commented out:
+```
+192.168.122.67 host-03
+#192.168.122.83 host-03
+```
   - Occasionally you'll get a VM in a non-bootable state or grub error
     - **Fix**: Force power off and power on again.
   - Sometimes you'll see phantom libguestfs VMs show up.
