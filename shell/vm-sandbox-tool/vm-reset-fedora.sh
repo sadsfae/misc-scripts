@@ -116,6 +116,7 @@ EOF
    # END SSH PUB KEY
    chmod 700 /root/.ssh
    chmod 600 /root/.ssh/authorized_keys
+   /usr/sbin/setenforce 0
 }
 
 content_update \$1
