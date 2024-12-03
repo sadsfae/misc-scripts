@@ -11,6 +11,11 @@ rsync_dst="$HOME/VM_BACKUP/images"
 vm_ls=("vm1.qcow2" "vm2.img" "vm3.qcow2")
 vm_ps=("vm4.img" "vm5.img")
 
+# obtain SSH key auth if run in screen etc.
+auth=$(find /tmp -user $LOGNAME -type s -name "*agent*" -print 2>/dev/null)
+SSH_AUTH_SOCK=$auth
+export SSH_AUTH_SOCK
+
 function sync_vm_host1 {
     echo "$timestamp - START syncing HOST1 VM to PLACE" >> "$HOME/Documents/vm-sync-to-remote.log"
     for vm in "${vm_ls[@]}";
