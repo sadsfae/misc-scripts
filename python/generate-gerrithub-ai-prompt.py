@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Generate an AI prompt dump for code review from a gerrithub patchset
 # e.g.
-# python gerrit_ai_prompt3.py https://review.gerrithub.io/c/redhat-performance/quads/+/1222441 -o review_prompt.txt -t help_review
+# python generate-gerrithub-ai-prompt.py https://review.gerrithub.io/c/redhat-performance/quads/+/1222441 -o review_prompt.txt -t help_review
 
 import requests
 import json
