@@ -8,7 +8,6 @@
 import argparse
 import json
 from urllib.parse import urlparse
-
 import requests
 
 # Constants for prompt templates from Gerrit source
