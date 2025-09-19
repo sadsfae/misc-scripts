@@ -1,146 +1,116 @@
 #!/bin/bash
-# Simple tool to create a bridged interface on a host.
-# assumes you're running a Red Hat based distribution
-# requires net-tools, bridge-utils
-# Warning: this relies on the legacy 'network'
-# service, if you are using NetworkManager it will be
-# stopped and disabled.
+# Quickly creates a bridged interface from an Ethernet interface using nmcli.
+# This script reads DNS settings directly from /etc/resolv.conf for maximum reliability.
 
-# set eth device and bridge as input variables
+# Set eth device and bridge as input variables
 ethname=$1
 bridgename=$2
 
-# print usage if not specified
-if [[ $# -eq 0 ]]; then
-    echo "USAGE:   ./eth-bridge-create.sh \$ETHDEVICE \$BRIDGENAME"
-	echo "EXAMPLE: ./eth-bridge-create.sh eth0 br0"
-	echo "                                      "
-	exit 1
+# --- Pre-flight Checks ---
+
+if [[ $# -ne 2 ]]; then
+    echo "USAGE:   ./eth-bridge-create.sh <ETH_DEVICE> <BRIDGE_NAME>"
+    echo "EXAMPLE: ./eth-bridge-create.sh enp1s0 br0"
+    exit 1
 fi
 
-# check to ensure user is root
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
+   echo "This script must be run as root." 1>&2
    exit 1
 fi
 
-# check that we have the right tools installed first.
-nettoolsinstalled=`rpm -qa | grep net-tools |wc -l`
-bridgeutilsinstalled=`rpm -qa | grep bridge-utils | wc -l`
-networkscriptsinstalled=`rpm -qa | grep network-scripts | head -n1 | wc -l`
-check_nettools() {
-	echo "checking for net-tools.."
-	if [[ $nettoolsinstalled = '0' ]]
-	then
-		echo "net-tools not installed.. installing"
-		yum install net-tools -y >/dev/null 2>&1
-        else
-        echo "[OK]"
-    fi
-}
-
-check_bridgeutils() {
-	echo "checking for bridge-utils.."
-	if [[ $bridgeutilsinstalled = '0' ]]
-	then
-		echo "bridge-utils not installed.. installing"
-		yum install bridge-utils -y >/dev/null 2>&1
-        else
-        echo "[OK]"
-    fi
-}
-
-check_netscripts() {
-	echo "checking for network-scripts.."
-	if [[ $networkscriptsinstalled = '0' ]]
-	then
-		echo "network-scripts is not installed.. installing"
-		yum install network-scripts -y >/dev/null 2>&1
-        else
-        echo "[OK]"
-    fi
-}
-# check net-tools and bridge-utils first
-check_nettools
-check_bridgeutils
-check_netscripts
-
-# check if NetworkManager is running/enabled
-nm_on=`systemctl status NetworkManager | grep running | wc -l`
-
-if [[ $nm_on -eq 1 ]]; then
-    # gather and print some interface info.
-nmcli_active_con=`/usr/bin/nmcli con show | egrep "ethernet" | awk '{print $1}' | head -n1`
-nmcli_ip_addr=`/usr/bin/nmcli con show $nmcli_active_con | grep "IP4.ADDRESS\[1\]:" | awk '{print $2}'`
-nmcli_gateway=`/sbin/route -n | grep UG | awk '{print $2}' | head -n1`
-nmcli_dns1=`cat /etc/resolv.conf | grep nameserver | head -n1 | awk '{print $2}'`
-
-    echo "Your current NetworkManager connection: $nmcli_active_con"
-    echo "Your current IP address: $nmcli_ip_addr"
-    echo "Your current Gatway: $nmcli_gateway"
-    echo "Your DNS server:  $nmcli_dns1"
-    echo "Using nmcli to set a static IP address..."
-    # use NetworkManager to create our static IP config
-    /usr/bin/nmcli con mod $nmcli_active_con ipv4.addresses $nmcli_ip_addr
-    /usr/bin/nmcli con mod $nmcli_active_con ipv4.method manual
-    /usr/bin/nmcli con mod $nmcli_active_con ipv4.addresses $nmcli_ip_addr
-    /usr/bin/nmcli con mod $nmcli_active_con ipv4.gateway $nmcli_gateway
-    /usr/bin/nmcli con mod $nmcli_active_con ipv4.dns $nmcli_dns1
-    /usr/bin/nmcli con mod $nmcli_active_con connection.autoconnect yes
-    /usr/bin/nmcli con up $nmcli_active_con
-    sed -i 's/BOOTPROTO=.*$/BOOTPROTO=static/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
-    echo "Disabling NetworkManager for ifcfg-$ethname script"
-    /usr/bin/systemctl stop NetworkManager >/dev/null 2>&1
-    /usr/bin/systemctl disable NetworkManager >/dev/null 2>&1
+if ! command -v nmcli &> /dev/null; then
+    echo "NetworkManager (nmcli) is not installed or not in PATH. This script cannot continue."
+    exit 1
 fi
 
-# check if IP address is static
-static=`cat /etc/sysconfig/network-scripts/ifcfg-$ethname | grep \
-	-i static | wc -l`
-if [[ $static -eq 1 ]]; then
-	echo "Static IP addressing detected, proceeding.."
-	else
-    echo "No Static IP address detected, quitting!"
-	exit 1
+if nmcli connection show "$bridgename" &>/dev/null; then
+    echo "Error: A connection profile named '$bridgename' already exists."
+    echo "To delete it, run: nmcli connection delete '$bridgename'"
+    exit 1
 fi
 
-check_br_exist()
-{  # check if there's a bridged interface
-   /sbin/ifconfig -a | grep $bridgename | egrep -v "virb" | wc -l
-}
+# Find the active connection profile for the specified ethernet device
+eth_con_name=$(nmcli -g NAME,DEVICE connection show --active | grep -E ":$ethname$" | cut -d: -f1)
+if [[ -z "$eth_con_name" ]]; then
+    echo "Error: No active NetworkManager connection found for device '$ethname'."
+    exit 1
+fi
+echo "Found active connection '$eth_con_name' for device '$ethname'."
 
-create_br_int()
-{  # bring up bridged interface, make primary
-   cp /etc/sysconfig/network-scripts/ifcfg-$ethname /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i 's/IPADDR/#IPADDR/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
-   sed -i 's/NETMASK/#NETMASK/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
-   sed -i 's/GATEWAY/#GATEWAY/g' /etc/sysconfig/network-scripts/ifcfg-$ethname
-   sed -i "s/DEVICE=$ethname/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/DEVICE=.*$/DEVICE=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i 's/UUID/#UUID/g' /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/NAME=$ethname/NAME=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/NAME=.*$/NAME=$bridgename/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i "s/TYPE=Ethernet/TYPE=Bridge/g" /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   sed -i 's/TYPE="Ethernet"/TYPE=Bridge/g' /etc/sysconfig/network-scripts/ifcfg-$bridgename
-   echo "BRIDGE=$bridgename" >> /etc/sysconfig/network-scripts/ifcfg-$ethname
-   echo "Restarting Network with new Bridge .. this may take a while"
-   /sbin/service network restart >/dev/null 2>&1
-   /usr/bin/systemctl enable network  >/dev/null 2>&1
-   echo "External Bridge: $bridgename created"
-   /sbin/ifconfig $bridgename
-   echo "Note:: If you see issues with routing you may need to reboot"
-}
+# Gather IP and Gateway info from the connection
+ip_addr=$(nmcli -g IP4.ADDRESS device show "$ethname" | head -n 1)
+gateway=$(nmcli -g IP4.GATEWAY device show "$ethname")
 
-# create bridge if it doesn't exist
-br_exist=$(check_br_exist)
+if [[ -z "$ip_addr" ]]; then
+    echo "Error: Device '$ethname' has no active IP address. Cannot proceed."
+    exit 1
+fi
 
-case $br_exist in
-'1')
-   echo "external bridge interface exists, quitting"
-   exit 1
-;;
-'0')
-   echo "external bridge interface doesn't seem to exist."
-   create_br_int
-;;
-esac
+# --- DEFINITIVE FIX: Get DNS servers from the reliable /etc/resolv.conf file ---
+echo "Gathering DNS information from /etc/resolv.conf..."
+declare -a dns_list=()
+# Read all lines starting with "nameserver" into the array
+readarray -t dns_list < <(grep '^nameserver' /etc/resolv.conf | awk '{print $2}')
+
+if [[ ${#dns_list[@]} -eq 0 ]]; then
+    echo "Warning: Could not find any DNS servers in /etc/resolv.conf. The bridge will be created without them."
+fi
+
+# Use 'set -e' to exit immediately if a command fails
+set -e
+
+echo
+echo "--- Configuration Summary ---"
+echo "  Device:       $ethname"
+echo "  Bridge to be created: $bridgename"
+echo "  IP Address:   $ip_addr"
+echo "  Gateway:      $gateway"
+echo "  DNS Servers:  ${dns_list[*]}"
+echo "-----------------------------"
+read -p "Do you want to proceed? (y/N) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Operation cancelled."
+    exit 1
+fi
+
+# --- Main Logic ---
+
+# Create the new bridge interface
+echo "Creating bridge connection profile '$bridgename'..."
+nmcli connection add type bridge con-name "$bridgename" ifname "$bridgename"
+
+# Apply IP and Gateway configuration
+echo "Applying IP and Gateway configuration to '$bridgename'..."
+nmcli connection modify "$bridgename" \
+    ipv4.method manual \
+    ipv4.addresses "$ip_addr" \
+    ipv4.gateway "$gateway" \
+    ipv4.ignore-auto-dns yes
+
+# Apply DNS servers one by one from the CLEANED list
+if [[ ${#dns_list[@]} -gt 0 ]]; then
+    echo "Applying DNS configuration from /etc/resolv.conf..."
+    # Set the first DNS server, overwriting any existing
+    nmcli connection modify "$bridgename" ipv4.dns "${dns_list[0]}"
+    # Add any subsequent DNS servers
+    for (( i=1; i<${#dns_list[@]}; i++ )); do
+        nmcli connection modify "$bridgename" +ipv4.dns "${dns_list[$i]}"
+    done
+fi
+
+# Delete the old ethernet connection profile
+echo "Deleting old ethernet profile '$eth_con_name'..."
+nmcli connection delete "$eth_con_name"
+
+# Create a new slave connection for the ethernet device and attach it to the bridge
+echo "Creating slave profile for '$ethname' and attaching it to '$bridgename'..."
+nmcli connection add type bridge-slave con-name "slave-$ethname" ifname "$ethname" master "$bridgename"
+
+# Bring up the new bridge connection
+echo "Activating the new bridge connection..."
+nmcli connection up "$bridgename"
+
+echo "✅ Success! Bridge '$bridgename' is created and active."
+echo "You can verify the settings with 'nmcli con show $bridgename"
