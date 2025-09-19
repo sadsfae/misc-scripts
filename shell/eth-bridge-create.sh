@@ -6,8 +6,7 @@
 ethname=$1
 bridgename=$2
 
-# --- Pre-flight Checks ---
-
+# basic input sanitization
 if [[ $# -ne 2 ]]; then
     echo "USAGE:   ./eth-bridge-create.sh <ETH_DEVICE> <BRIDGE_NAME>"
     echo "EXAMPLE: ./eth-bridge-create.sh enp1s0 br0"
