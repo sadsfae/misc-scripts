@@ -19,12 +19,12 @@ def get_bitcoin_price_usd():
 
 def main():
     if len(sys.argv) != 4:
-        print("Usage: python check_btc_price.py <above|below> "
+        print("Usage: python coin_price.py <above|below> "
               "<target_price> <path_to_wav_file>")
         print("Examples:")
-        print("  Moon alert: python check_btc_price.py above "
+        print("  Moon alert: python coin_price.py above "
               "100000 alert.wav")
-        print("  Dip alert:  python check_btc_price.py below "
+        print("  Dip alert:  python coin_price.py below "
               "80000 dip.wav")
         sys.exit(1)
 
