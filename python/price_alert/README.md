@@ -22,6 +22,12 @@ Simple coin price alert application, loops a .WAV file when target is hit.
 ## Stock Price Checker
 Simple stock price checker, requires Polygon.io API key
 
+### Requires
+* Python 3.x
+* `python-requests`
+* Polygon API key (free) for stocks only
+* mplayer (or substitute your own audio player)
+
 ### Setup
 1) Go to https://polygon.io and sign up for a free account (no credit card needed).
 2) Get your API key from the dashboard
