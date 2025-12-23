@@ -81,15 +81,9 @@ def update_deques(now, price, price_history, min_prices, max_prices, cutoff):
         if max_prices and max_prices[0][0] == old_time:
             max_prices.popleft()
 
-def check_volatility(price_history, min_prices, max_prices, time_mins, target_pct):
+def check_volatility(price_history, min_prices, max_prices, target_pct):
     """Check if volatility threshold is met. Returns (triggered, swing_pct) or (False, None)."""
     if not price_history:
-        return False, None
-
-    now = price_history[-1][0]
-    span_mins = (now - price_history[0][0]) / 60.0
-
-    if span_mins < time_mins:
         return False, None
 
     min_price = min_prices[0][1]
@@ -105,6 +99,8 @@ def run_volatility_monitor(symbol, target_pct, time_mins, wav, player_cmd, fetch
     """Run the volatility monitoring loop."""
     price_history, min_prices, max_prices = deque(), deque(), deque()
     triggered = False
+    warmed_up = False
+    start_time = None
 
     while True:
         price = fetch_price()
@@ -112,17 +108,24 @@ def run_volatility_monitor(symbol, target_pct, time_mins, wav, player_cmd, fetch
         time_str = time.strftime('%H:%M:%S')
 
         if price is not None and price > 0:
+            if start_time is None:
+                start_time = now
+
             cutoff = now - (time_mins * 60)
             update_deques(now, price, price_history, min_prices, max_prices, cutoff)
             span_mins = (now - price_history[0][0]) / 60.0
 
+            if not warmed_up and (now - start_time) / 60.0 >= time_mins:
+                warmed_up = True
+                start_time = None
+
             if triggered:
                 print(f"{symbol}: ${price:,.2f} ({time_str})")
-            elif span_mins < time_mins:
+            elif not warmed_up:
                 print(f"{symbol}: ${price:,.2f} (warming up...) ({time_str})")
             else:
                 alert, swing_pct = check_volatility(
-                    price_history, min_prices, max_prices, time_mins, target_pct)
+                    price_history, min_prices, max_prices, target_pct)
                 if alert:
                     min_price, max_price = min_prices[0][1], max_prices[0][1]
                     print(f"\n!!! {symbol} VOLATILITY: {swing_pct:.2f}% range in {span_mins:.1f}min "
