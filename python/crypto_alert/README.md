@@ -9,4 +9,5 @@
 
 ### Usage
 `python coin_price.py below 85000 alert.wav`
+
 `python coin_price.py above 85000 alert.wav`
