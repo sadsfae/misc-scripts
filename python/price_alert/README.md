@@ -43,6 +43,6 @@ python check_price.py tsla above 400 alert.wav
 python check_price.py ibm below 200 alert.wav
 ```
 
-still uses coingecko open API
+crypto prices still uses coingecko open API
 
 `python check_price.py btc above 85000 alert.wav`
