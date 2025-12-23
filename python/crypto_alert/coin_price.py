@@ -99,7 +99,7 @@ def main():
             else:
                 print("Failed to fetch price, retrying...")
 
-            time.sleep(30)
+            time.sleep(45)
 
     except KeyboardInterrupt:
         print("\nMonitoring stopped.")

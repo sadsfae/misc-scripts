@@ -1,4 +1,6 @@
 ## Crypto Price Checker
+Simple coin price alert application, loops a .WAV file when target is hit.
+
 * Simple coin price checker
 * Adjust `params = {'ids': 'bitcoin',` for other coins
 * Uses coingecko simple API.
