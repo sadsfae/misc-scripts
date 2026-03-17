@@ -9,31 +9,26 @@ NC='\033[0m' # No Color
 # Function to check status of services
 status() {
   echo -e "${YELLOW}Checking status of AI services...${NC}"
-
   if systemctl --user is-active --quiet llama-server; then
     echo -e "llama-server: ${GREEN}Running${NC}"
   else
     echo -e "llama-server: ${RED}Stopped${NC}"
   fi
-
-  if podman inspect open-webui &>/dev/null; then
+  if podman ps -a --filter "name=open-webui" | grep -q "Up"; then
     echo -e "open-webui: ${GREEN}Running${NC}"
   else
     echo -e "open-webui: ${RED}Stopped${NC}"
   fi
-
   if systemctl --user is-active --quiet forge-server.service; then
     echo -e "forge-server.service: ${GREEN}Running${NC}"
   else
     echo -e "forge-server.service: ${RED}Stopped${NC}"
   fi
-
   if systemctl --user is-active --quiet comfy; then
     echo -e "comfy: ${GREEN}Running${NC}"
   else
     echo -e "comfy: ${RED}Stopped${NC}"
   fi
-
   if ss -lnt '( sport = :http )' | grep -q ':80'; then
     echo -e "nginx: ${GREEN}Running${NC}"
   else
