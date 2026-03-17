@@ -13,10 +13,9 @@ NC = "\033[0m"  # No Color
 
 def check_status():
     print(f"{YELLOW}Checking status of AI services...{NC}")
-
     services = [
         ("llama-server", "systemctl --user is-active --quiet llama-server"),
-        ("open-webui", "podman inspect open-webui > /dev/null 2>&1"),
+        ("open-webui", "podman ps -a --filter 'name=open-webui' | grep -q 'Up'"),
         (
             "forge-server.service",
             "systemctl --user is-active --quiet forge-server.service",
@@ -24,7 +23,6 @@ def check_status():
         ("comfy", "systemctl --user is-active --quiet comfy"),
         ("nginx", "ss -lnt '( sport = :http )' | grep -q ':80'"),
     ]
-
     for service_name, check_command in services:
         if subprocess.run(check_command, shell=True).returncode == 0:
             print(f"{service_name}: {GREEN}Running{NC}")
