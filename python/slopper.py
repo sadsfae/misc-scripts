@@ -1,4 +1,4 @@
-"""Start or stop local LLM services"""
+"""Simple tool for start/stop/status of LLM"""
 
 import subprocess
 import sys
@@ -35,7 +35,11 @@ def check_status():
 def slopstop():
     print(f"{RED}Stopping AI services...{NC}")
     subprocess.run(["systemctl", "--user", "stop", "llama-server"])
-    subprocess.run(["podman", "stop", "open-webui"])
+    subprocess.run(
+        ["podman", "stop", "open-webui"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     subprocess.run(["systemctl", "--user", "stop", "forge-server.service"])
     subprocess.run(["systemctl", "--user", "stop", "comfy"])
     subprocess.run(["sudo", "systemctl", "stop", "nginx"])
@@ -46,7 +50,11 @@ def slopstart():
     print(f"{RED}Starting AI services...{NC}")
     subprocess.run(["systemctl", "--user", "start", "llama-server"])
     time.sleep(10)
-    subprocess.run(["podman", "start", "open-webui"])
+    subprocess.run(
+        ["podman", "start", "open-webui"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     subprocess.run(["systemctl", "--user", "start", "forge-server.service"])
     subprocess.run(["systemctl", "--user", "start", "comfy"])
     subprocess.run(["sudo", "systemctl", "start", "nginx"])
