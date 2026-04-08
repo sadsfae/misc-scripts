@@ -57,15 +57,14 @@ fi
 echo "Found $FILE_COUNT updated pages. Initiating targeted download..."
 
 # ==========================================
-# 3. Asset Refresh & CSS Hiding
+# Asset Refresh & CSS Hiding
 # ==========================================
 echo "Step 2: Refreshing global CSS and JS assets..."
 wget -qO- "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=mediawiki.legacy.commonPrint%2Cshared%7Cskins.monobook&only=styles&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=styles&skin=monobook&*" >"p99-offline.css"
-
 wget -qO- "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=startup&only=scripts&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=scripts&skin=monobook&*" >"p99-offline.js"
 
-# Hide the entire Personal Tools menu (Login, Create Account, etc.)
-echo "#p-personal { display: none !important; }" >>p99-offline.css
+# Strip out the Login menu and the custom P99 Site Notice paragraph
+echo '#p-personal, #siteNotice, #localNotice { display: none !important; }' >>p99-offline.css
 
 # ==========================================
 # 4. The Targeted Wget Strike
