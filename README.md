@@ -25,3 +25,7 @@ Ops, automation or dev tools organized by language.
 **groovy**
 
 - Mostly Jenkins pipelines written in groovy
+
+**powershell**
+
+- Windows utilities
