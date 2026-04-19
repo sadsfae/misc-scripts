@@ -1,6 +1,5 @@
 # ================================================
-# EQ + nParse Config Switcher (Improved Elevation)
-# Now handles direct "Open with PowerShell" more gracefully
+# EQ + nParse Config Switcher (Fixed Parser Error)
 # ================================================
 
 # ================== CONFIGURATION ==================
@@ -10,7 +9,7 @@ $nparseDir = "C:\nparse"
 $characters = @("pivo")
 # ==================================================
 
-# ================== SELF-ELEVATION (IMPROVED) ==================
+# ================== SELF-ELEVATION ==================
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     $scriptPath = $PSCommandPath
     Write-Host "Requesting Administrator privileges..." -ForegroundColor Yellow
@@ -32,7 +31,7 @@ if (-not (Test-Path $nparseDir)) {
 
 Set-Location $eqDir
 
-# ================== HELPER FUNCTION (unchanged) ==================
+# ================== HELPER FUNCTION ==================
 function Switch-ConfigFile {
     param(
         [string]$Directory,
@@ -63,7 +62,7 @@ function Switch-ConfigFile {
         return $true
     }
     catch {
-        Write-Host "  FAILURE on $BaseName: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  FAILURE on ${BaseName}: $($_.Exception.Message)" -ForegroundColor Red
         return $false
     }
 }
