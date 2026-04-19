@@ -34,13 +34,13 @@ A simple, interactive PowerShell script that instantly switches your **eqclient.
 
 ## Installation
 
-1. Download `EQ-Config-Switcher.ps1` and place it anywhere on your PC (recommended: `C:\Scripts\EQ-Config-Switcher.ps1` or your Documents folder).
+1. Download `profile-switcher.ps1` and place it anywhere on your PC (recommended: `C:\Scripts\profile-switcher.ps1` or your Documents folder).
 
 2. **Create a desktop shortcut** (highly recommended):
    - Right-click on your desktop → **New** → **Shortcut**
    - Target:
      ```
-     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Scripts\EQ-Config-Switcher.ps1"
+     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Scripts\profile-switcher.ps1"
      ```
    - Name it something like `Switch EQ + nParse Config`
    - Right-click the shortcut → **Properties** → **Advanced** → check **"Run as administrator"** → OK
