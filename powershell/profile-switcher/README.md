@@ -1,4 +1,3 @@
-````markdown
 # EQ Config + UI Switcher
 
 A simple, interactive PowerShell script that instantly switches your **eqclient.ini** resolution settings **and** per-character UI layout files (`UI_CHARACTERNAME_project1999.ini`) between:
@@ -49,7 +48,6 @@ A simple, interactive PowerShell script that instantly switches your **eqclient.
    $eqDir = "C:\Everquest"          # Change only if your EQ folder is elsewhere
    $characters = @("pivo")          # Add your character names here, e.g. @("pivo", "main", "alt")
    ```
-````
 
 ---
 
