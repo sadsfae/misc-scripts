@@ -1,16 +1,15 @@
 # ================================================
-# EQ Config + UI Switcher - eqclient.ini + Per-Character UI Toggle
-# Now also switches UI_CHARACTERNAME_project1999.ini files for listed characters
+# EQ Config + UI + nParse Switcher
+# Now also switches nparse.config.json between desktop and laptop versions
 # Run from desktop shortcut (set to "Run as administrator")
 # ================================================
 
 # ================== CONFIGURATION ==================
-# Change this ONLY if your EverQuest folder is not the default location
-$eqDir = "C:\Everquest"
+# Change these ONLY if your folders are in a different location
+$eqDir     = "C:\Everquest"
+$nparseDir = "C:\nparse"                  # ← nParse config folder
 
 # List of character names whose UI settings you want to auto-switch.
-# Add or remove names here (e.g. "pivo", "myalt", "mainchar").
-# Only these characters will have their UI files renamed/copied.
 $characters = @("pivo")
 # ==================================================
 
@@ -29,27 +28,34 @@ if (-not (Test-Path $eqDir)) {
     exit
 }
 
-# Set working directory
+# Optional: Warn if nParse folder is missing (but still continue)
+if (-not (Test-Path $nparseDir)) {
+    Write-Host "WARNING: nParse directory not found at $nparseDir" -ForegroundColor Yellow
+    Write-Host "nParse config switching will be skipped until the folder exists." -ForegroundColor Yellow
+}
+
+# Set working directory to EQ (for consistency)
 Set-Location $eqDir
 
 # ================== HELPER FUNCTION ==================
-function Switch-EQFile {
+function Switch-ConfigFile {
     param(
-        [string]$BaseName,      # e.g. "eqclient.ini" or "UI_pivo_project1999.ini"
+        [string]$Directory,     # Folder where the file lives
+        [string]$BaseName,      # e.g. "eqclient.ini", "UI_pivo_project1999.ini", "nparse.config.json"
         [string]$BackupSuffix,  # ".laptop" or ".desktop"
         [string]$SourceSuffix   # ".desktop" or ".laptop"
     )
 
-    $currentFile = Join-Path $eqDir $BaseName
-    $backupFile  = Join-Path $eqDir "$BaseName$BackupSuffix"
-    $sourceFile  = Join-Path $eqDir "$BaseName$SourceSuffix"
+    $currentFile = Join-Path $Directory $BaseName
+    $backupFile  = Join-Path $Directory "$BaseName$BackupSuffix"
+    $sourceFile  = Join-Path $Directory "$BaseName$SourceSuffix"
 
     if (-not (Test-Path $currentFile)) {
-        Write-Host "  WARNING: $BaseName not found - skipping" -ForegroundColor Yellow
+        Write-Host "  WARNING: $BaseName not found in $Directory - skipping" -ForegroundColor Yellow
         return $false
     }
     if (-not (Test-Path $sourceFile)) {
-        Write-Host "  WARNING: $BaseName$SourceSuffix not found - skipping (create it once manually)" -ForegroundColor Yellow
+        Write-Host "  WARNING: $BaseName$SourceSuffix not found in $Directory - skipping (create it once manually)" -ForegroundColor Yellow
         return $false
     }
 
@@ -73,11 +79,11 @@ function Switch-EQFile {
 # ================== MENU ==================
 Clear-Host
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "   EverQuest Config + UI Switcher" -ForegroundColor Green
+Write-Host "   EverQuest + nParse Config Switcher" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "1) Restore 1440p eqclient.ini + UI (Desktop / 34`" Ultrawide)" -ForegroundColor White
-Write-Host "2) Restore laptop 2.5k eqclient.ini + UI (Laptop / 14`" display)" -ForegroundColor White
+Write-Host "1) Restore 1440p (Desktop / 34`" Ultrawide) - eqclient + UI + nParse" -ForegroundColor White
+Write-Host "2) Restore 2.5k (Laptop / 14`" display) - eqclient + UI + nParse" -ForegroundColor White
 Write-Host "Q) Quit" -ForegroundColor White
 Write-Host ""
 
@@ -91,25 +97,22 @@ switch ($choice.ToUpper()) {
         $backupSuffix = ".laptop"
         $sourceSuffix = ".desktop"
 
-        try {
-            Write-Host "`nSwitching to $actionDesc..." -ForegroundColor Cyan
+        Write-Host "`nSwitching to $actionDesc..." -ForegroundColor Cyan
+        $switched = 0
 
-            $switched = 0
+        # eqclient.ini
+        if (Switch-ConfigFile $eqDir "eqclient.ini" $backupSuffix $sourceSuffix) { $switched++ }
 
-            # eqclient.ini
-            if (Switch-EQFile "eqclient.ini" $backupSuffix $sourceSuffix) { $switched++ }
-
-            # UI files for each character
-            foreach ($char in $characters) {
-                $uiBase = "UI_${char}_project1999.ini"
-                if (Switch-EQFile $uiBase $backupSuffix $sourceSuffix) { $switched++ }
-            }
-
-            Write-Host "`nOVERALL SUCCESS: Switched $switched file(s) to $actionDesc" -ForegroundColor Green
+        # UI files for each character
+        foreach ($char in $characters) {
+            $uiBase = "UI_${char}_project1999.ini"
+            if (Switch-ConfigFile $eqDir $uiBase $backupSuffix $sourceSuffix) { $switched++ }
         }
-        catch {
-            Write-Host "`nFAILURE: $($_.Exception.Message)" -ForegroundColor Red
-        }
+
+        # nparse.config.json
+        if (Switch-ConfigFile $nparseDir "nparse.config.json" $backupSuffix $sourceSuffix) { $switched++ }
+
+        Write-Host "`nOVERALL SUCCESS: Switched $switched file(s) to $actionDesc" -ForegroundColor Green
     }
 
     '2' {
@@ -118,25 +121,22 @@ switch ($choice.ToUpper()) {
         $backupSuffix = ".desktop"
         $sourceSuffix = ".laptop"
 
-        try {
-            Write-Host "`nSwitching to $actionDesc..." -ForegroundColor Cyan
+        Write-Host "`nSwitching to $actionDesc..." -ForegroundColor Cyan
+        $switched = 0
 
-            $switched = 0
+        # eqclient.ini
+        if (Switch-ConfigFile $eqDir "eqclient.ini" $backupSuffix $sourceSuffix) { $switched++ }
 
-            # eqclient.ini
-            if (Switch-EQFile "eqclient.ini" $backupSuffix $sourceSuffix) { $switched++ }
-
-            # UI files for each character
-            foreach ($char in $characters) {
-                $uiBase = "UI_${char}_project1999.ini"
-                if (Switch-EQFile $uiBase $backupSuffix $sourceSuffix) { $switched++ }
-            }
-
-            Write-Host "`nOVERALL SUCCESS: Switched $switched file(s) to $actionDesc" -ForegroundColor Green
+        # UI files for each character
+        foreach ($char in $characters) {
+            $uiBase = "UI_${char}_project1999.ini"
+            if (Switch-ConfigFile $eqDir $uiBase $backupSuffix $sourceSuffix) { $switched++ }
         }
-        catch {
-            Write-Host "`nFAILURE: $($_.Exception.Message)" -ForegroundColor Red
-        }
+
+        # nparse.config.json
+        if (Switch-ConfigFile $nparseDir "nparse.config.json" $backupSuffix $sourceSuffix) { $switched++ }
+
+        Write-Host "`nOVERALL SUCCESS: Switched $switched file(s) to $actionDesc" -ForegroundColor Green
     }
 
     'Q' {
