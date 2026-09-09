@@ -9,9 +9,9 @@ YACY_DOMAIN="eq.funcamp.net"
 cd "$WIKI_DIR" || exit
 
 echo "Step 1: Collapsing dynamic CSS and JS assets..."
-wget -qO- "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=mediawiki.legacy.commonPrint%2Cshared%7Cskins.monobook&only=styles&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=styles&skin=monobook&*" > "$WIKI_DIR/p99-offline.css"
+wget -qO- --no-check-certificate "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=mediawiki.legacy.commonPrint%2Cshared%7Cskins.monobook&only=styles&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=styles&skin=monobook&*" > "$WIKI_DIR/p99-offline.css"
 
-wget -qO- "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=startup&only=scripts&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=scripts&skin=monobook&*" > "$WIKI_DIR/p99-offline.js"
+wget -qO- --no-check-certificate "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=startup&only=scripts&skin=monobook&*" "https://wiki.project1999.com/load.php?debug=false&lang=en&modules=site&only=scripts&skin=monobook&*" > "$WIKI_DIR/p99-offline.js"
 
 echo "Step 2: Starting incremental Wget mirror sync..."
 # The regex is now tuned to allow pagination (?pagefrom=) but block infinite loops (action=, diff=, etc.)
