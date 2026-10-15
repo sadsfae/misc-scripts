@@ -1,0 +1,10 @@
+## ptop.c is a small program that lists the highest consumers of memory
+## and CPU on a running system 
+
+## First compile rcon.c
+
+gcc -O2 -Wall -Wextra -o ptop ptop.c
+
+## Now run it 
+
+./ptop
