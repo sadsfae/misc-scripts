@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""anyupdates: report pending Omarchy, AUR, and Arch updates. Read-only."""
+"""anyupdates: report pending Omarchy, AUR, plugin, and Arch updates. Read-only."""
 
 import os
 import re
@@ -30,11 +30,17 @@ from rich.table import Table
 console = Console()
 UPDATES_RE = re.compile(r"^(\S+)\s+(\S+)\s+->\s+(\S+)")
 OMARCHY_PKGS = ("omarchy", "omarchy-dev")
+PLUGINS_DIR = os.path.expanduser(os.environ.get("OMARCHY_PLUGINS_DIR", "~/.config/omarchy/plugins"))
+GIT_ENV = {
+    **os.environ,
+    "GIT_TERMINAL_PROMPT": "0",
+    "GIT_SSH_COMMAND": os.environ.get("GIT_SSH_COMMAND", "ssh -oBatchMode=yes"),
+}
 
 
-def run(cmd, ok_codes):
+def run(cmd, ok_codes, env=None):
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600, env=env)
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
         return [], f"{type(exc).__name__}: {exc}"
     if proc.returncode not in ok_codes:
@@ -54,7 +60,34 @@ def fetch(cmd, ok_codes):
     return rows, err
 
 
-def source_table(title, style, rows):
+def plugin_updates():
+    rows, errs = [], []
+    if not os.path.isdir(PLUGINS_DIR):
+        return rows, errs
+    for name in sorted(os.listdir(PLUGINS_DIR)):
+        pdir = os.path.join(PLUGINS_DIR, name)
+        if not os.path.isdir(os.path.join(pdir, ".git")):
+            continue
+        _, err = run(["git", "-C", pdir, "fetch", "--quiet", "origin", "HEAD"], (0,), env=GIT_ENV)
+        if err:
+            errs.append(f"plugin {name}: {err}")
+            continue
+        head, _ = run(["git", "-C", pdir, "rev-parse", "HEAD"], (0,), env=GIT_ENV)
+        fetched, _ = run(["git", "-C", pdir, "rev-parse", "FETCH_HEAD"], (0,), env=GIT_ENV)
+        if not head or not fetched or head[0] == fetched[0]:
+            continue
+        new, _ = run(["git", "-C", pdir, "rev-list", "--count", "HEAD..FETCH_HEAD"], (0,), env=GIT_ENV)
+        new_count = new[0] if new else "?"
+        if new_count.isdigit() and int(new_count) == 0:
+            continue
+        dirty = bool(
+            run(["git", "-C", pdir, "status", "--porcelain", "--untracked-files=normal"], (0,), env=GIT_ENV)[0]
+        )
+        rows.append((name, new_count, "yes" if dirty else ""))
+    return rows, errs
+
+
+def source_table(title, style, rows, columns=("Package", "Current", "New")):
     table = Table(
         title=title,
         title_style=style,
@@ -62,22 +95,23 @@ def source_table(title, style, rows):
         header_style="bold",
         show_edge=False,
     )
-    table.add_column("Package", style="bold")
-    table.add_column("Current", justify="right", style="dim")
-    table.add_column("New", justify="right")
-    for pkg, current, new in rows:
-        table.add_row(pkg, current, new)
+    styles = ("bold", "dim", "") + ("dim",) * max(0, len(columns) - 3)
+    for i, col in enumerate(columns):
+        table.add_column(col, style=styles[i], justify="left" if i == 0 else "right")
+    for row in rows:
+        table.add_row(*row)
     return table
 
 
 def main():
     arch, err_arch = fetch(["checkupdates", "--nocolor"], ok_codes=(0, 2))
     aur, err_aur = fetch(["yay", "-Qua", "--color", "never"], ok_codes=(0, 1))
+    plugins, plugin_errs = plugin_updates()
 
     omarchy = sorted(row for row in arch if row[0] in OMARCHY_PKGS)
     arch = sorted(row for row in arch if row[0] not in OMARCHY_PKGS)
-    total = len(arch) + len(aur) + len(omarchy)
-    errors = [e for e in (err_arch, err_aur) if e]
+    total = len(arch) + len(aur) + len(omarchy) + len(plugins)
+    errors = [e for e in (err_arch, err_aur, *plugin_errs) if e]
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     if not total and not errors:
@@ -88,6 +122,7 @@ def main():
                         "[green]\u2713[/green] Arch repos: up to date",
                         "[green]\u2713[/green] AUR: up to date",
                         "[green]\u2713[/green] Omarchy: up to date",
+                        "[green]\u2713[/green] Plugins: up to date",
                     ]
                 ),
                 title=f"[bold]Update check[/bold] [dim]· {now}[/dim]",
@@ -104,6 +139,11 @@ def main():
         console.print(source_table("AUR", "bold magenta", aur))
     if omarchy:
         console.print(source_table("Omarchy", "bold green", omarchy))
+    if plugins:
+        console.print(
+            source_table("Plugins", "bold green", plugins, columns=("Plugin", "New commits", "Local changes"))
+        )
+        console.print("[dim]Run [bold]plugin-update[/bold] to install plugin updates[/dim]")
 
     for err in errors:
         console.print(f"[yellow]![/yellow] {err}")
@@ -114,6 +154,7 @@ def main():
             ("Arch", len(arch), "cyan"),
             ("AUR", len(aur), "magenta"),
             ("Omarchy", len(omarchy), "green"),
+            ("Plugins", len(plugins), "green"),
         ):
             if count:
                 parts.append(f"[bold {style}]{count} {name}[/bold {style}]")
