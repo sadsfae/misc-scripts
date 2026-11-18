@@ -15,7 +15,8 @@ wget -qO- --no-check-certificate "https://wiki.project1999.com/load.php?debug=fa
 
 echo "Step 2: Starting incremental Wget mirror sync..."
 # The regex is now tuned to allow pagination (?pagefrom=) but block infinite loops (action=, diff=, etc.)
-wget -k -p -m -nv -nH --reject-regex ".*(action=|diff=|oldid=|printable=|limit=|sort=|dir=|RecentChanges|WhatLinksHere|Search|UserLogin|Help:|Help%3A).*" --content-disposition --no-check-certificate -E https://wiki.project1999.com
+# -X "index.php" prevents recreating the stale index.php/ and index.php.dir/ artifact dirs.
+wget -k -p -m -nv -nH -X "index.php" --reject-regex ".*(action=|diff=|oldid=|printable=|limit=|sort=|dir=|RecentChanges|WhatLinksHere|Search|UserLogin|Help:|Help%3A).*" --content-disposition --no-check-certificate -E https://wiki.project1999.com
 
 echo "Step 3: Localizing all assets and internal links..."
 find "$WIKI_DIR" -type f -name "*.html" -exec sed -i -E \
@@ -32,5 +33,11 @@ find "$WIKI_DIR" -type f -name "*.html" -exec sed -i -E \
 find /var/www/html/p99wiki/ -type f -name "index.php?*" | while read filepath; do mv "$filepath" "${filepath//\?/_}"; done
 # update links
 find /var/www/html/p99wiki/ -type f -name "*.html" -exec sed -i -E 's/index\.php\?/index.php_/g' {} +
+
+# ==========================================
+# 5. Strip dead MediaWiki chrome (idempotent)
+# ==========================================
+echo "Step 4: Stripping dead MediaWiki chrome and dead index.php links (idempotent)..."
+"$(dirname "$0")/p99-sanitize.sh"
 
 echo "--- SYNC COMPLETE ---"

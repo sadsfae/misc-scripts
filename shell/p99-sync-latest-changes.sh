@@ -113,6 +113,9 @@ done
 echo "Step 6: Enforcing standard web permissions on updated files..."
 find . -type f -mtime -1 -exec chmod 644 {} +
 
+echo "Step 7: Stripping dead MediaWiki chrome and dead index.php links from updated files (idempotent)..."
+"$(dirname "$0")/p99-sanitize.sh" -mtime -1
+
 # Cleanup our hit-list
 rm -f smart_sync_urls.txt
 
